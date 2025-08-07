@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MUGANG | 开发者技术日志</title>
+  <style>
+    /* 全局样式与配色方案 */
+    :root {
+      --primary: #2d3436;
+      --secondary: #636e72;
+      --accent: #0984e3;
+      --light: #f5f6fa;
+      --dark: #2d3436;
+      --text: #2d3436;
+      --text-light: #636e72;
+      --sidebar-bg: #ffffff;
+      --card-bg: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    /* 自定义滚动条 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #94a3b8;
+    }
+
+    body {
+      background-color: var(--light);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: var(--accent);
+      transition: all 0.3s ease;
+    }
+
+    a:hover {
+      color: var(--primary);
+    }
+
+    /* 左侧导航 */
+    .sidebar {
+      width: 240px;
+      background-color: var(--sidebar-bg);
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background-color: var(--accent);
+      color: white;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+    }
+
+    .nav-menu {
+      flex: 1;
+      height: calc(100vh - 280px);
+      overflow: auto;
+    }
+
+    .nav-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: var(--text-light);
+      letter-spacing: 1px;
+      margin: 1.5rem 0 0.8rem;
+    }
+
+    .nav-links {
+      list-style: none;
+    }
+
+    .nav-links li {
+      margin-bottom: 0.5rem;
+    }
+
+    .nav-links a {
+      display: flex;
+      align-items: center;
+      padding: 0.6rem 0.8rem;
+      border-radius: 6px;
+      color: var(--text);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      background-color: rgba(9, 132, 227, 0.1);
+      color: var(--accent);
+    }
+
+    .nav-links a svg {
+      margin-right: 10px;
+      width: 18px;
+      height: 18px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: var(--accent);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+
+    .user-name {
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    /* 右侧主内容 */
+    .main-content {
+      flex: 1;
+      padding: 2rem 3rem;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .page-title h1 {
+      font-size: 1.8rem;
+      color: var(--primary);
+    }
+
+    .page-title p {
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    .search-bar {
+      position: relative;
+      width: 300px;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 0.8rem 1rem 0.8rem 2.5rem;
+      border: none;
+      border-radius: 6px;
+      background-color: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      font-size: 0.9rem;
+    }
+
+    .search-bar svg {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+    }
+
+    /* 文章卡片 */
+    .articles {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .article-card {
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .article-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-image {
+      height: 160px;
+      overflow: hidden;
+    }
+
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .article-card:hover .card-image img {
+      transform: scale(1.05);
+    }
+
+    .card-content {
+      padding: 1.5rem;
+    }
+
+    .card-content h3 {
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+      font-size: 1.1rem;
+      line-height: 1.4;
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-light);
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-tag {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      background-color: rgba(9, 132, 227, 0.1);
+      color: var(--accent);
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .card-excerpt {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .read-more {
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .read-more svg {
+      margin-left: 5px;
+      transition: transform 0.3s ease;
+    }
+
+    .read-more:hover svg {
+      transform: translateX(3px);
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 200px;
+        padding: 1.5rem 1rem;
+      }
+
+      .main-content {
+        padding: 1.5rem 2rem;
+      }
+
+      .search-bar {
+        width: 250px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 1rem;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .logo {
+        margin-bottom: 0;
+        margin-right: 1.5rem;
+      }
+
+      .nav-menu {
+        flex: 1;
+        display: flex;
+        height: auto;
+        overflow-x: auto;
+      }
+
+      .nav-title {
+        display: none;
+      }
+
+      .nav-links {
+        display: flex;
+      }
+
+      .nav-links li {
+        margin-bottom: 0;
+        margin-right: 0.5rem;
+      }
+
+      .sidebar-footer {
+        display: none;
+      }
+
+      .main-content {
+        padding: 1.5rem;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .page-title {
+        margin-bottom: 1rem;
+      }
+
+      .search-bar {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .articles {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 左侧导航 -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">M</div>
+      <span>木杠社区</span>
+    </div>
+
+    <nav class="nav-menu">
+      <div class="nav-title">导航</div>
+      <ul class="nav-links">
+        <li>
+          <a href="#" class="active">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            首页
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+            前端技术
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+            后端开发
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+              </path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            DevOps
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            架构设计
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav-title">分类</div>
+      <ul class="nav-links">
+        <li>
+          <a href="https://lucide.dev/icons/?focus" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 16H4a2 2 0 1 1 0-4h16a2 2 0 1 1 0 4h-4.25" />
+              <path d="M5 12a2 2 0 0 1-2-2 9 7 0 0 1 18 0 2 2 0 0 1-2 2" />
+              <path d="M5 16a2 2 0 0 0-2 2 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 2 2 0 0 0-2-2q0 0 0 0" />
+              <path d="m6.67 12 6.13 4.6a2 2 0 0 0 2.8-.4l3.15-4.2" />
+            </svg>
+            Lucide图标
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+              <line x1="7" y1="7" x2="7.01" y2="7"></line>
+            </svg>
+            JavaScript
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path>
+              <path d="M8.5 8.5v.01"></path>
+              <path d="M16 15.5v.01"></path>
+              <path d="M12 12v.01"></path>
+              <path d="M11 17v.01"></path>
+              <path d="M7 14v.01"></path>
+            </svg>
+            TypeScript
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            React
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+              </path>
+            </svg>
+            Node.js
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="1" />
+              <path
+                d="M20.2 20.2c2.04-2.03.02-7.36-4.5-11.9-4.54-4.52-9.87-6.54-11.9-4.5-2.04 2.03-.02 7.36 4.5 11.9 4.54 4.52 9.87 6.54 11.9 4.5Z" />
+              <path
+                d="M15.7 15.7c4.52-4.54 6.54-9.87 4.5-11.9-2.03-2.04-7.36-.02-11.9 4.5-4.52 4.54-6.54 9.87-4.5 11.9 2.03 2.04 7.36.02 11.9-4.5Z" />
+            </svg>
+            Electron
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar">Z</div>
+        <div>
+          <div class="user-name">zhagons</div>
+          <div class="user-role">木杠青年</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 右侧主内容 -->
+  <main class="main-content">
+    <header class="header">
+      <div class="page-title">
+        <h1>技术文章</h1>
+        <p>最新技术分享与开发实践</p>
+      </div>
+
+      <div class="search-bar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" placeholder="搜索文章...">
+      </div>
+    </header>
+
+    <div class="articles">
+      <!-- 文章卡片1 -->
+      <article class="article-card">
+        <div class="card-image">
+          <img
+            src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+            alt="React性能优化">
+        </div>
+        <div class="card-content">
+          <span class="card-tag">React</span>
+          <h3>React 18并发模式深度解析与性能优化实践</h3>
+          <div class="card-meta">
+            <span>2025-06-15</span>
+            <span>8分钟阅读</span>
+          </div>
+          <p class="card-excerpt">深入探讨React 18的并发渲染机制，分享如何利用useTransition、useDeferredValue等新API优化应用性能...</p>
+          <a href="#" class="read-more">
+            阅读更多
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 文章卡片2 -->
+      <article class="article-card">
+        <div class="card-image">
+          <img
+            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+            alt="微服务架构">
+        </div>
+        <div class="card-content">
+          <span class="card-tag">架构</span>
+          <h3>微服务架构中的分布式事务解决方案对比</h3>
+          <div class="card-meta">
+            <span>2025-06-12</span>
+            <span>12分钟阅读</span>
+          </div>
+          <p class="card-excerpt">详细分析Saga模式、TCC、本地消息表等分布式事务解决方案的优缺点及适用场景，结合实际案例分享最佳实践...</p>
+          <a href="#" class="read-more">
+            阅读更多
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 文章卡片3 -->
+      <article class="article-card">
+        <div class="card-image">
+          <img
+            src="https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+            alt="TypeScript">
+        </div>
+        <div class="card-content">
+          <span class="card-tag">TypeScript</span>
+          <h3>TypeScript 4.9新特性与高级类型编程技巧</h3>
+          <div class="card-meta">
+            <span>2025-06-10</span>
+            <span>10分钟阅读</span>
+          </div>
+          <p class="card-excerpt">解读TypeScript 4.9的satisfies操作符等新特性，深入讲解条件类型、模板字面量类型等高级类型编程技巧...</p>
+          <a href="#" class="read-more">
+            阅读更多
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 文章卡片4 -->
+      <article class="article-card">
+        <div class="card-image">
+          <img
+            src="https://images.unsplash.com/photo-1627398242454-45a1465c2479?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+            alt="Docker">
+        </div>
+        <div class="card-content">
+          <span class="card-tag">DevOps</span>
+          <h3>Docker多阶段构建优化镜像体积实践指南</h3>
+          <div class="card-meta">
+            <span>2025-06-08</span>
+            <span>6分钟阅读</span>
+          </div>
+          <p class="card-excerpt">通过实际案例演示如何使用Docker多阶段构建大幅减小镜像体积，分享.alpine基础镜像选择与优化技巧...</p>
+          <a href="#" class="read-more">
+            阅读更多
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 文章卡片5 -->
+      <article class="article-card">
+        <div class="card-image">
+          <img
+            src="https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+            alt="Next.js">
+        </div>
+        <div class="card-content">
+          <span class="card-tag">Next.js</span>
+          <h3>Next.js 13 App Router架构解析与迁移指南</h3>
+          <div class="card-meta">
+            <span>2025-06-05</span>
+            <span>15分钟阅读</span>
+          </div>
+          <p class="card-excerpt">深度解析Next.js 13全新的App Router架构，对比Pages Router差异，提供平滑迁移方案与性能优化建议...</p>
+          <a href="#" class="read-more">
+            阅读更多
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 文章卡片6 -->
+      <article class="article-card">
+        <div class="card-image">
+          <img
+            src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+            alt="数据库">
+        </div>
+        <div class="card-content">
+          <span class="card-tag">数据库</span>
+          <h3>PostgreSQL高级特性：JSONB操作与索引优化</h3>
+          <div class="card-meta">
+            <span>2025-06-01</span>
+            <span>9分钟阅读</span>
+          </div>
+          <p class="card-excerpt">详细介绍PostgreSQL中JSONB数据类型的操作语法，GIN索引原理与优化技巧，以及实际业务场景中的应用案例...</p>
+          <a href="#" class="read-more">
+            阅读更多
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        </div>
+      </article>
+    </div>
+  </main>
+  <script>
+
+  </script>
+</body>
+
+</html>
