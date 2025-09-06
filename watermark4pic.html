@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>多证件水印添加工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+            min-height: 100vh;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 0;
+            box-shadow: none;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background: #4a6fa5;
+            color: white;
+            padding: 16px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            gap: 16px;
+            flex: 1;
+        }
+        
+        .control-section {
+            width: 100%;
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 10px;
+            order: 1;
+        }
+        
+        .preview-section {
+            width: 100%;
+            order: 2;
+        }
+        
+        .upload-area {
+            border: 2px dashed #4a6fa5;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 16px;
+            background: rgba(74, 111, 165, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .upload-area.highlight {
+            background: rgba(74, 111, 165, 0.15);
+            border-color: #385d8a;
+        }
+        
+        .upload-icon {
+            font-size: 2.5rem;
+            color: #4a6fa5;
+            margin-bottom: 10px;
+        }
+        
+        .upload-text {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .upload-subtext {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .image-counter {
+            background: #4a6fa5;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        
+        .images-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .image-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            aspect-ratio: 3/4;
+            background: #f0f0f0;
+        }
+        
+        .image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .image-actions {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px;
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        .image-btn {
+            color: white;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            min-width: auto;
+            padding: 5px;
+            cursor: pointer;
+        }
+        
+        .image-name {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-align: center;
+            text-overflow: ellipsis;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        .control-title {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: #4a6fa5;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .control-title i {
+            margin-right: 8px;
+        }
+        
+        .control-item {
+            margin-bottom: 16px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        
+        input[type="text"], select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: white;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: #ddd;
+            border-radius: 3px;
+            outline: none;
+            margin: 10px 0;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #4a6fa5;
+            cursor: pointer;
+        }
+        
+        .color-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        input[type="color"] {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 10px;
+            padding: 0;
+            background: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        .range-value {
+            display: inline-block;
+            width: 50px;
+            text-align: center;
+            font-weight: 500;
+            margin-left: 12px;
+            background: #eef2f7;
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: #4a6fa5;
+            color: white;
+        }
+        
+        .btn-primary:active {
+            background: #385d8a;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:active {
+            background: #218838;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:active {
+            background: #c82333;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 16px;
+            color: #666;
+            font-size: 0.8rem;
+            border-top: 1px solid #eee;
+            background: #f9f9f9;
+            margin-top: auto;
+        }
+        
+        .wechat-tips {
+            background: #e6f7e6;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 16px;
+            font-size: 0.85rem;
+            color: #1e7e34;
+            display: flex;
+            align-items: center;
+        }
+        
+        .wechat-tips i {
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4a6fa5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #888;
+            font-size: 0.9rem;
+            grid-column: 1 / -1;
+        }
+        
+        /* 移动端优化 */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 1000px;
+                margin: 20px auto;
+                border-radius: 16px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                min-height: auto;
+            }
+            
+            header {
+                border-radius: 16px 16px 0 0;
+            }
+            
+            footer {
+                border-radius: 0 0 16px 16px;
+            }
+            
+            .main-content {
+                flex-direction: row;
+            }
+            
+            .control-section {
+                width: 40%;
+                order: 1;
+            }
+            
+            .preview-section {
+                width: 60%;
+                order: 2;
+            }
+            
+            .images-container {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+        
+        /* 横屏优化 */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .images-container {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>多证件水印添加工具</h1>
+            <p class="subtitle">批量添加水印，保护您的证件安全</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="control-section">
+                <h2>水印设置</h2>
+                
+                <div class="control-group">
+                    <div class="control-title">
+                        <i class="fas fa-font"></i> 水印内容
+                    </div>
+                    
+                    <div class="control-item">
+                        <label for="watermarkText">水印文字</label>
+                        <input type="text" id="watermarkText" value="仅供办理业务使用" placeholder="请输入水印文字">
+                    </div>
+                    
+                    <div class="control-item">
+                        <label for="watermarkColor">水印颜色</label>
+                        <div class="color-container">
+                            <input type="color" id="watermarkColor" value="#ff0000">
+                            <span class="range-value" id="colorValue">#FF0000</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-title">
+                        <i class="fas fa-paint-brush"></i> 样式设置
+                    </div>
+                    
+                    <div class="control-item">
+                        <label for="fontSize">字体大小 <span class="range-value" id="fontSizeValue">24px</span></label>
+                        <input type="range" id="fontSize" min="10" max="60" value="24">
+                    </div>
+                    
+                    <div class="control-item">
+                        <label for="opacity">透明度 <span class="range-value" id="opacityValue">50%</span></label>
+                        <input type="range" id="opacity" min="0.1" max="1" step="0.1" value="0.5">
+                    </div>
+                    
+                    <div class="control-item">
+                        <label for="rotation">旋转角度 <span class="range-value" id="rotationValue">30°</span></label>
+                        <input type="range" id="rotation" min="0" max="360" value="30">
+                    </div>
+                    
+                    <div class="control-item">
+                        <label for="pattern">水印模式</label>
+                        <select id="pattern">
+                            <option value="diagonal">对角线平铺</option>
+                            <option value="center">中心单水印</option>
+                            <option value="full">满屏平铺</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button id="applyAllBtn" class="btn-primary">
+                        <i class="fas fa-check"></i> 全部应用
+                    </button>
+                    <button id="downloadAllBtn" class="btn-success">
+                        <i class="fas fa-download"></i> 下载全部
+                    </button>
+                    <button id="clearAllBtn" class="btn-danger">
+                        <i class="fas fa-trash"></i> 清空全部
+                    </button>
+                </div>
+                
+                <div class="loading" id="loadingIndicator">
+                    <div class="loading-spinner"></div>
+                    <div>正在处理中...</div>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">点击或拖拽证件图片到此处</div>
+                    <div class="upload-subtext">支持多选（最多9张图片）</div>
+                    <div class="image-counter">已选择: <span id="imageCount">0</span> 张</div>
+                    <input type="file" id="imageUpload" accept="image/*" multiple style="display: none;">
+                </div>
+                
+                <div class="images-container" id="imagesContainer">
+                    <div class="empty-state">暂无图片，请上传证件照片</div>
+                </div>
+                
+                <div class="wechat-tips">
+                    <i class="fas fa-info-circle"></i>
+                    <div>提示：在微信中点击上传区域后，可选择"拍摄"或"从手机相册选择"</div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>提示：添加水印后请下载图片，刷新页面会丢失当前编辑内容</p>
+            <p>© 2025 多证件水印添加工具</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取DOM元素
+            const uploadArea = document.getElementById('uploadArea');
+            const imageUpload = document.getElementById('imageUpload');
+            const imagesContainer = document.getElementById('imagesContainer');
+            const imageCount = document.getElementById('imageCount');
+            const applyAllBtn = document.getElementById('applyAllBtn');
+            const downloadAllBtn = document.getElementById('downloadAllBtn');
+            const clearAllBtn = document.getElementById('clearAllBtn');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            
+            // 水印控制元素
+            const watermarkText = document.getElementById('watermarkText');
+            const watermarkColor = document.getElementById('watermarkColor');
+            const colorValue = document.getElementById('colorValue');
+            const fontSize = document.getElementById('fontSize');
+            const fontSizeValue = document.getElementById('fontSizeValue');
+            const opacity = document.getElementById('opacity');
+            const opacityValue = document.getElementById('opacityValue');
+            const rotation = document.getElementById('rotation');
+            const rotationValue = document.getElementById('rotationValue');
+            const pattern = document.getElementById('pattern');
+            
+            // 存储所有图片数据
+            let imagesData = [];
+            const MAX_IMAGES = 9;
+            
+            // 检测是否在微信浏览器中
+            function isWeChatBrowser() {
+                return /MicroMessenger/i.test(navigator.userAgent);
+            }
+            
+            if (isWeChatBrowser()) {
+                document.querySelector('.wechat-tips').style.display = 'flex';
+            }
+            
+            // 上传区域点击事件
+            uploadArea.addEventListener('click', function() {
+                imageUpload.click();
+            });
+            
+            // 拖拽功能
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('highlight');
+            });
+            
+            uploadArea.addEventListener('dragleave', function() {
+                uploadArea.classList.remove('highlight');
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('highlight');
+                
+                if (e.dataTransfer.files.length > 0) {
+                    handleFiles(e.dataTransfer.files);
+                }
+            });
+            
+            // 文件选择事件
+            imageUpload.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files.length > 0) {
+                    handleFiles(e.target.files);
+                }
+            });
+            
+            // 处理上传的文件
+            function handleFiles(files) {
+                const filesArray = Array.from(files);
+                const remainingSlots = MAX_IMAGES - imagesData.length;
+                
+                if (remainingSlots <= 0) {
+                    alert(`最多只能上传${MAX_IMAGES}张图片`);
+                    return;
+                }
+                
+                const filesToProcess = filesArray.slice(0, remainingSlots);
+                
+                showLoading(true);
+                
+                // 使用Promise.all处理多个文件
+                const promises = filesToProcess.map(file => {
+                    return new Promise((resolve) => {
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(event) {
+                            const img = new Image();
+                            img.onload = function() {
+                                resolve({
+                                    id: Date.now() + Math.random().toString(36).substr(2, 5),
+                                    originalImage: img,
+                                    file: file,
+                                    watermarked: false
+                                });
+                            };
+                            img.onerror = function() {
+                                resolve(null);
+                            };
+                            img.src = event.target.result;
+                        };
+                        
+                        reader.onerror = function() {
+                            resolve(null);
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    });
+                });
+                
+                Promise.all(promises).then(results => {
+                    const validImages = results.filter(img => img !== null);
+                    
+                    validImages.forEach(imageData => {
+                        imagesData.push(imageData);
+                        renderImageItem(imageData);
+                    });
+                    
+                    updateImageCount();
+                    showLoading(false);
+                    
+                    if (validImages.length < filesToProcess.length) {
+                        alert('部分图片加载失败，请重试');
+                    }
+                });
+            }
+            
+            // 渲染图片项
+            function renderImageItem(imageData) {
+                // 移除空状态提示
+                const emptyState = imagesContainer.querySelector('.empty-state');
+                if (emptyState) {
+                    emptyState.remove();
+                }
+                
+                const imageItem = document.createElement('div');
+                imageItem.className = 'image-item';
+                imageItem.dataset.id = imageData.id;
+                
+                // 创建图片元素
+                const img = document.createElement('img');
+                img.src = imageData.originalImage.src;
+                img.alt = imageData.file.name;
+                
+                // 图片名称
+                const imageName = document.createElement('div');
+                imageName.className = 'image-name';
+                imageName.textContent = imageData.file.name;
+                
+                // 操作按钮
+                const imageActions = document.createElement('div');
+                imageActions.className = 'image-actions';
+                
+                imageActions.innerHTML = `
+                    <button class="image-btn apply-btn" title="应用水印">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button class="image-btn download-btn" title="下载">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="image-btn remove-btn" title="删除">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                imageItem.appendChild(img);
+                imageItem.appendChild(imageName);
+                imageItem.appendChild(imageActions);
+                
+                imagesContainer.appendChild(imageItem);
+                
+                // 添加事件监听
+                imageItem.querySelector('.apply-btn').addEventListener('click', function() {
+                    applyWatermarkToSingle(imageData.id);
+                });
+                
+                imageItem.querySelector('.download-btn').addEventListener('click', function() {
+                    downloadSingleImage(imageData.id);
+                });
+                
+                imageItem.querySelector('.remove-btn').addEventListener('click', function() {
+                    removeImage(imageData.id);
+                });
+            }
+            
+            // 更新图片计数
+            function updateImageCount() {
+                imageCount.textContent = imagesData.length;
+            }
+            
+            // 移除图片
+            function removeImage(id) {
+                imagesData = imagesData.filter(img => img.id !== id);
+                const imageItem = imagesContainer.querySelector(`[data-id="${id}"]`);
+                if (imageItem) {
+                    imageItem.remove();
+                }
+                
+                updateImageCount();
+                
+                // 如果没有图片了，显示空状态
+                if (imagesData.length === 0) {
+                    imagesContainer.innerHTML = '<div class="empty-state">暂无图片，请上传证件照片</div>';
+                }
+            }
+            
+            // 清空全部图片
+            clearAllBtn.addEventListener('click', function() {
+                if (imagesData.length === 0) return;
+                
+                if (confirm('确定要清空所有图片吗？')) {
+                    imagesData = [];
+                    imagesContainer.innerHTML = '<div class="empty-state">暂无图片，请上传证件照片</div>';
+                    updateImageCount();
+                }
+            });
+            
+            // 应用水印到单张图片
+            function applyWatermarkToSingle(id) {
+                const imageData = imagesData.find(img => img.id === id);
+                if (!imageData) return;
+                
+                showLoading(true);
+                
+                setTimeout(() => {
+                    applyWatermark(imageData);
+                    imageData.watermarked = true;
+                    showLoading(false);
+                    alert('水印已应用到该图片');
+                }, 100);
+            }
+            
+            // 应用水印到全部图片
+            applyAllBtn.addEventListener('click', function() {
+                if (imagesData.length === 0) {
+                    alert('请先上传证件照片！');
+                    return;
+                }
+                
+                showLoading(true);
+                
+                setTimeout(() => {
+                    let processed = 0;
+                    imagesData.forEach(imageData => {
+                        applyWatermark(imageData);
+                        imageData.watermarked = true;
+                        processed++;
+                    });
+                    
+                    showLoading(false);
+                    alert(`水印已应用到全部 ${processed} 张图片`);
+                }, 100);
+            });
+            
+            // 应用水印的具体逻辑
+            function applyWatermark(imageData) {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // 设置canvas尺寸与图片相同
+                canvas.width = imageData.originalImage.width;
+                canvas.height = imageData.originalImage.height;
+                
+                // 绘制原始图片
+                ctx.drawImage(imageData.originalImage, 0, 0, canvas.width, canvas.height);
+                
+                // 设置水印样式
+                ctx.font = `${fontSize.value}px Arial`;
+                ctx.fillStyle = watermarkColor.value;
+                ctx.globalAlpha = opacity.value;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                const text = watermarkText.value || '示例水印';
+                const angle = (rotation.value * Math.PI) / 180;
+                
+                // 根据模式添加水印
+                if (pattern.value === 'center') {
+                    // 中心单水印
+                    ctx.save();
+                    ctx.translate(canvas.width / 2, canvas.height / 2);
+                    ctx.rotate(angle);
+                    ctx.fillText(text, 0, 0);
+                    ctx.restore();
+                } else if (pattern.value === 'diagonal' || pattern.value === 'full') {
+                    // 平铺水印
+                    const spacingX = pattern.value === 'full' ? 150 : 200;
+                    const spacingY = pattern.value === 'full' ? 100 : 150;
+                    
+                    for (let x = 50; x < canvas.width; x += spacingX) {
+                        for (let y = 50; y < canvas.height; y += spacingY) {
+                            ctx.save();
+                            ctx.translate(x, y);
+                            ctx.rotate(angle);
+                            ctx.fillText(text, 0, 0);
+                            ctx.restore();
+                        }
+                    }
+                }
+                
+                ctx.globalAlpha = 1; // 重置透明度
+                
+                // 保存水印后的canvas到图片数据
+                imageData.watermarkedCanvas = canvas;
+                
+                // 更新显示的图片
+                const imageItem = imagesContainer.querySelector(`[data-id="${imageData.id}"]`);
+                if (imageItem) {
+                    const imgElement = imageItem.querySelector('img');
+                    imgElement.src = canvas.toDataURL('image/png');
+                }
+            }
+            
+            // 下载单张图片
+            function downloadSingleImage(id) {
+                const imageData = imagesData.find(img => img.id === id);
+                if (!imageData) return;
+                
+                if (!imageData.watermarked) {
+                    alert('请先应用水印！');
+                    return;
+                }
+                
+                downloadImage(imageData);
+            }
+            
+            // 下载全部图片
+            downloadAllBtn.addEventListener('click', function() {
+                if (imagesData.length === 0) {
+                    alert('请先上传证件照片并添加水印！');
+                    return;
+                }
+                
+                // 检查是否所有图片都已添加水印
+                const unwatermarked = imagesData.filter(img => !img.watermarked);
+                if (unwatermarked.length > 0) {
+                    if (!confirm(`${unwatermarked.length}张图片尚未添加水印，是否继续下载？`)) {
+                        return;
+                    }
+                }
+                
+                // 依次下载每张图片
+                imagesData.forEach(imageData => {
+                    if (imageData.watermarked) {
+                        downloadImage(imageData);
+                    }
+                });
+                
+                alert('下载任务已开始，请根据浏览器提示保存图片');
+            });
+            
+            // 下载图片的通用函数
+            function downloadImage(imageData) {
+                const dataUrl = imageData.watermarkedCanvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.download = `watermarked-${imageData.file.name}`;
+                link.href = dataUrl;
+                
+                // 兼容移动端浏览器
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+            
+            // 显示/隐藏加载指示器
+            function showLoading(show) {
+                loadingIndicator.style.display = show ? 'block' : 'none';
+                applyAllBtn.disabled = show;
+                downloadAllBtn.disabled = show;
+                clearAllBtn.disabled = show;
+            }
+            
+            // 更新颜色值显示
+            watermarkColor.addEventListener('input', function() {
+                colorValue.textContent = this.value.toUpperCase();
+            });
+            
+            // 更新范围输入值的显示
+            fontSize.addEventListener('input', function() {
+                fontSizeValue.textContent = `${this.value}px`;
+            });
+            
+            opacity.addEventListener('input', function() {
+                opacityValue.textContent = `${Math.round(this.value * 100)}%`;
+            });
+            
+            rotation.addEventListener('input', function() {
+                rotationValue.textContent = `${this.value}°`;
+            });
+            
+            // 初始化显示值
+            colorValue.textContent = watermarkColor.value.toUpperCase();
+            fontSizeValue.textContent = `${fontSize.value}px`;
+            opacityValue.textContent = `${Math.round(opacity.value * 100)}%`;
+            rotationValue.textContent = `${rotation.value}°`;
+        });
+    </script>
+</body>
+</html>
