@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.ico">
+    <title>Markdown转微信公众号文章工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="marked.min.js"></script>
+    <script src="editor.min.js"></script>
+    <style>
+        :root {
+            --primary: #07C160;
+            --primary-hover: #06ae56;
+            --secondary: #576b95;
+            --secondary-hover: #495a80;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+        
+        .editor-panel, .preview-panel {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel-header {
+            padding: 20px;
+            background: linear-gradient(to right, var(--secondary), #3a4a6f);
+            color: white;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+        
+        .panel-body {
+            padding: 20px;
+            height: 500px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        #markdown-input {
+            width: 100%;
+            height: 100%;
+            padding: 15px;
+            border: 2px solid var(--gray-300);
+            border-radius: 10px;
+            resize: none;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        #markdown-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(7, 193, 96, 0.2);
+        }
+        
+        #html-preview {
+            height: 100%;
+            overflow-y: auto;
+            padding: 15px;
+            border: 2px solid var(--gray-200);
+            border-radius: 10px;
+            background: #fcfcfc;
+        }
+        
+        .control-panel {
+            width: 100%;
+            margin-top: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .panel-subheader {
+            padding: 15px 20px;
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-300);
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        
+        .theme-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 25px;
+        }
+        
+        .theme-option {
+            flex: 1;
+            min-width: 220px;
+            padding: 20px;
+            border: 2px solid var(--gray-300);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .theme-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            border-color: var(--primary);
+        }
+        
+        .theme-option.active {
+            border-color: var(--primary);
+            background-color: rgba(7, 193, 96, 0.05);
+            box-shadow: 0 5px 15px rgba(7, 193, 96, 0.1);
+        }
+        
+        .theme-option h3 {
+            margin-bottom: 12px;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .theme-option h3 i {
+            color: var(--primary);
+        }
+        
+        .theme-option p {
+            font-size: 0.95rem;
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+        
+        .actions {
+            padding: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            background: var(--gray-100);
+            border-top: 1px solid var(--gray-300);
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), #05a350);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to right, var(--primary-hover), #049547);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(to right, var(--secondary), #45577d);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(to right, var(--secondary-hover), #374668);
+        }
+        
+        .format-tools {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .format-btn {
+            padding: 10px 15px;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .format-btn:hover {
+            background: var(--gray-200);
+            border-color: var(--gray-400);
+            transform: translateY(-2px);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 25px;
+            color: var(--gray-600);
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .theme-option {
+                min-width: 100%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .format-tools {
+                flex-wrap: wrap;
+            }
+        }
+        
+        /* 微信公众号文章样式 */
+        .wechat-article {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+            line-height: 1.7;
+            color: #333;
+            padding: 20px;
+            max-width: 100%;
+        }
+        
+        .wechat-article h1 {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 25px 0;
+            color: #333;
+            position: relative;
+        }
+        
+        .wechat-article h1::after {
+            content: "";
+            display: block;
+            width: 50px;
+            height: 2px;
+            background: var(--primary);
+            margin: 10px auto;
+        }
+        
+        .wechat-article h2 {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 30px 0 15px;
+            padding-left: 15px;
+            border-left: 5px solid #07C160;
+            color: #444;
+        }
+        
+        .wechat-article h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 25px 0 10px;
+            color: #666;
+        }
+        
+        .wechat-article p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-align: justify;
+            line-height: 1.8;
+        }
+        
+        .wechat-article ul, .wechat-article ol {
+            padding-left: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .wechat-article li {
+            margin-bottom: 10px;
+            line-height: 1.8;
+        }
+        
+        .wechat-article blockquote {
+            background-color: #f9f9f9;
+            border-left: 5px solid var(--gray-400);
+            padding: 20px;
+            margin: 20px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .wechat-article code {
+            background-color: #f5f5f5;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+            font-size: 0.9em;
+        }
+        
+        .wechat-article pre {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .wechat-article pre code {
+            background: none;
+            padding: 0;
+        }
+        
+        .wechat-article table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .wechat-article th, .wechat-article td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .wechat-article th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .wechat-article tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .wechat-article img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        /* 专业主题 */
+        .theme-professional.wechat-article {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            color: #222;
+            background: linear-gradient(to bottom, #ffffff 0%, #f9f9f9 100%);
+            padding: 25px;
+            border-radius: 10px;
+        }
+        
+        .theme-professional.wechat-article h2 {
+            border-left-color: #2b6dc0;
+        }
+        
+        /* 清新主题 */
+        .theme-fresh.wechat-article {
+            font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+            color: #444;
+            background-color: #fbfdfd;
+            padding: 25px;
+            border-radius: 10px;
+        }
+        
+        .theme-fresh.wechat-article h2 {
+            border-left-color: #ff6b6b;
+        }
+        
+        .theme-fresh.wechat-article p {
+            color: #555;
+        }
+        
+        /* 科技主题 */
+        .theme-tech.wechat-article {
+            font-family: Consolas, "Courier New", monospace;
+            color: #222;
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .theme-tech.wechat-article h2 {
+            border-left-color: #17a2b8;
+        }
+        
+        .theme-tech.wechat-article p {
+            font-family: Consolas, "Courier New", monospace;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: var(--primary);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            max-width: 350px;
+            font-weight: 500;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .notification.error {
+            background: var(--danger);
+        }
+        
+        .copy-help {
+            margin-top: 15px;
+            font-size: 14px;
+            color: var(--gray-600);
+            text-align: center;
+            padding: 0 20px 20px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--gray-100);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        
+        .stat-label {
+            color: var(--gray-600);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="notification" id="notification">内容已复制到剪贴板！</div>
+    
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-file-alt"></i> Markdown转微信公众号文章工具</h1>
+            <p class="subtitle">轻松将Markdown内容转换为适合微信公众号的精美文章</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="editor-panel">
+                <div class="panel-header">
+                    <span><i class="fas fa-edit"></i> Markdown编辑区</span>
+                    <div class="format-tools">
+                        <button class="format-btn" data-tag="h1"><i class="fas fa-heading"></i> 标题</button>
+                        <button class="format-btn" data-tag="h2"><i class="fas fa-heading fa-xs"></i> 小标题</button>
+                        <button class="format-btn" data-tag="bold"><i class="fas fa-bold"></i> 粗体</button>
+                        <button class="format-btn" data-tag="italic"><i class="fas fa-italic"></i> 斜体</button>
+                        <button class="format-btn" data-tag="code"><i class="fas fa-code"></i> 代码</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <textarea id="markdown-input" placeholder="在此输入Markdown内容..."># 手机电脑互传文件太麻烦？这些高效工具一定有一个适合你！
+
+在这个数字化时代，我们经常需要在手机和电脑之间传输文件：工作文档、生活照片、视频素材……但你是否还在为传输文件而烦恼？
+
+## 一、原生系统方案：生态圈内的无缝体验
+
+### 1. 苹果生态：隔空投送（AirDrop）
+
+苹果用户的专属利器。无需安装任何应用，只需确保设备开启蓝牙和Wi-Fi，即可在iPhone、iPad和Mac之间快速共享文件。
+
+**优点：**
+- 传输速度快，质量无损
+- 无需连接网络，通过蓝牙配对，Wi-Fi直连传输
+- 完全免费，无需额外安装
+- 极高的安全性，设备间端到端加密
+
+**缺点：**
+- 仅限于苹果设备之间使用
+
+## 二、选择指南：找到你的最佳拍档
+
+| 特性 | 微信/钉钉 | QQ | 专业工具 |
+|------|-----------|----|----------|
+| 最大优势 | 极致的方便 | 功能与便利的平衡 | 跨平台与性能 |
+| 传输原理 | 服务器中转 | P2P+服务器 | 局域网直连 |
+| 速度 | 慢 | 快 | 极快 |
+
+## 三、小贴士：传输效率提升技巧
+
+1. **保持设备在同一网络**：局域网传输工具需要设备连接同一Wi-Fi网络
+2. **大文件优先选择有线连接**：数据线仍然是最稳定的选择
+3. **注意原图选项**：使用QQ、微信时记得勾选"原图"避免压缩
+
+> 科技的意义在于让生活更便捷。希望这些工具能够帮助你摆脱文件传输的烦恼！</textarea>
+                </div>
+            </div>
+            
+            <div class="preview-panel">
+                <div class="panel-header">
+                    <span><i class="fas fa-eye"></i> 微信公众号预览</span>
+                    <span id="theme-name">默认主题</span>
+                </div>
+                <div class="panel-body">
+                    <div id="html-preview" class="wechat-article">
+                        <p>预览将在这里显示...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="control-panel">
+            <div class="panel-header">
+                <span><i class="fas fa-palette"></i> 主题选择</span>
+            </div>
+            <div class="theme-selector">
+                <div class="theme-option active" data-theme="default">
+                    <h3><i class="fas fa-star"></i> 默认主题</h3>
+                    <p>简洁大方的微信公众号标准样式，适合大多数文章类型</p>
+                </div>
+                <div class="theme-option" data-theme="professional">
+                    <h3><i class="fas fa-briefcase"></i> 专业主题</h3>
+                    <p>适合技术、商业等专业领域内容，风格严谨正式</p>
+                </div>
+                <div class="theme-option" data-theme="fresh">
+                    <h3><i class="fas fa-leaf"></i> 清新主题</h3>
+                    <p>适合生活、旅行、美食等轻松话题，风格活泼清新</p>
+                </div>
+                <div class="theme-option" data-theme="tech">
+                    <h3><i class="fas fa-microchip"></i> 科技主题</h3>
+                    <p>适合互联网、数码产品等科技类内容，风格现代简约</p>
+                </div>
+            </div>
+            
+            <div class="panel-subheader">
+                <i class="fas fa-tools"></i> 操作选项
+            </div>
+            <div class="actions">
+                <button class="btn btn-primary" id="copy-btn">
+                    <i class="fas fa-copy"></i> 复制到剪贴板
+                </button>
+                <button class="btn btn-secondary" id="reset-btn">
+                    <i class="fas fa-redo"></i> 重置内容
+                </button>
+                <button class="btn btn-secondary" id="export-btn">
+                    <i class="fas fa-download"></i> 导出HTML
+                </button>
+            </div>
+            
+            <div class="copy-help">
+                <p><i class="fas fa-info-circle"></i> 提示：复制后可直接粘贴到微信公众号编辑器中，样式将保持不变</p>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="char-count">0</div>
+                    <div class="stat-label">字符数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="word-count">0</div>
+                    <div class="stat-label">单词数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="line-count">0</div>
+                    <div class="stat-label">行数</div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p><i class="fas fa-copyright"></i> 2025 Markdown转微信公众号文章工具 | 本工具仅提供格式转换，请注意遵守微信公众号平台相关规定</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const markdownInput = document.getElementById('markdown-input');
+            const htmlPreview = document.getElementById('html-preview');
+            const copyBtn = document.getElementById('copy-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const exportBtn = document.getElementById('export-btn');
+            const themeOptions = document.querySelectorAll('.theme-option');
+            const themeName = document.getElementById('theme-name');
+            const formatBtns = document.querySelectorAll('.format-btn');
+            const notification = document.getElementById('notification');
+            const charCount = document.getElementById('char-count');
+            const wordCount = document.getElementById('word-count');
+            const lineCount = document.getElementById('line-count');
+            
+            let currentTheme = 'default';
+            
+            // 初始渲染
+            updatePreview();
+            updateStats();
+            
+            // 监听Markdown输入变化
+            markdownInput.addEventListener('input', function() {
+                updatePreview();
+                updateStats();
+            });
+            
+            // 复制到剪贴板 - 修复版
+            copyBtn.addEventListener('click', function() {
+                // 获取带样式的HTML内容
+                const htmlContent = generateStyledHTML();
+                
+                // 使用现代Clipboard API
+                if (navigator.clipboard && window.ClipboardItem) {
+                    const blob = new Blob([htmlContent], { type: 'text/html' });
+                    const clipboardItem = new ClipboardItem({ 'text/html': blob });
+                    
+                    navigator.clipboard.write([clipboardItem])
+                        .then(() => {
+                            showNotification('内容已复制到剪贴板！现在可以粘贴到微信公众号后台了。');
+                        })
+                        .catch(err => {
+                            console.error('复制失败:', err);
+                            fallbackCopy(htmlContent);
+                        });
+                } else {
+                    // 降级方案
+                    fallbackCopy(htmlContent);
+                }
+            });
+            
+            // 降级复制方案
+            function fallbackCopy(htmlContent) {
+                // 创建临时textarea用于复制
+                const textarea = document.createElement('textarea');
+                textarea.value = htmlContent;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                
+                document.body.appendChild(textarea);
+                textarea.select();
+                
+                try {
+                    const successful = document.execCommand('copy');
+                    if (successful) {
+                        showNotification('内容已复制到剪贴板！现在可以粘贴到微信公众号后台了。');
+                    } else {
+                        showNotification('复制失败，请尝试手动选择并复制内容。', 'error');
+                    }
+                } catch (err) {
+                    console.error('复制失败:', err);
+                    showNotification('复制失败，请尝试手动选择并复制内容。', 'error');
+                }
+                
+                document.body.removeChild(textarea);
+            }
+            
+            // 重置内容
+            resetBtn.addEventListener('click', function() {
+                if (confirm('确定要重置所有内容吗？')) {
+                    markdownInput.value = '';
+                    updatePreview();
+                    updateStats();
+                }
+            });
+            
+            // 导出HTML
+            exportBtn.addEventListener('click', function() {
+                const htmlContent = generateStyledHTML();
+                const blob = new Blob([htmlContent], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'wechat-article.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showNotification('HTML文件已下载！');
+            });
+            
+            // 主题选择
+            themeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    themeOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    currentTheme = this.getAttribute('data-theme');
+                    themeName.textContent = this.querySelector('h3').textContent;
+                    updatePreview();
+                });
+            });
+            
+            // 格式化按钮
+            formatBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tag = this.getAttribute('data-tag');
+                    const start = markdownInput.selectionStart;
+                    const end = markdownInput.selectionEnd;
+                    const selectedText = markdownInput.value.substring(start, end);
+                    
+                    let newText = '';
+                    
+                    switch(tag) {
+                        case 'h1':
+                            newText = `# ${selectedText}`;
+                            break;
+                        case 'h2':
+                            newText = `## ${selectedText}`;
+                            break;
+                        case 'bold':
+                            newText = `**${selectedText}**`;
+                            break;
+                        case 'italic':
+                            newText = `*${selectedText}*`;
+                            break;
+                        case 'code':
+                            newText = `\`${selectedText}\``;
+                            break;
+                    }
+                    
+                    markdownInput.value = markdownInput.value.substring(0, start) + newText + markdownInput.value.substring(end);
+                    markdownInput.focus();
+                    markdownInput.setSelectionRange(start, start + newText.length);
+                    updatePreview();
+                    updateStats();
+                });
+            });
+            
+            // 更新预览
+            function updatePreview() {
+                const markdownText = markdownInput.value;
+                const htmlContent = marked.parse(markdownText);
+                htmlPreview.innerHTML = htmlContent;
+                
+                // 应用当前主题
+                htmlPreview.className = 'wechat-article';
+                if (currentTheme !== 'default') {
+                    htmlPreview.classList.add(`theme-${currentTheme}`);
+                }
+            }
+            
+            // 更新统计信息
+            function updateStats() {
+                const text = markdownInput.value;
+                charCount.textContent = text.length;
+                wordCount.textContent = text.trim() ? text.trim().split(/\s+/).length : 0;
+                lineCount.textContent = text.split('\n').length;
+            }
+            
+            // 生成带样式的HTML
+            function generateStyledHTML() {
+                const markdownText = markdownInput.value;
+                let htmlContent = marked.parse(markdownText);
+                
+                // 创建一个临时元素来处理HTML内容
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = htmlContent;
+                
+                // 根据当前主题添加内联样式
+                if (currentTheme === 'professional') {
+                    applyInlineStyles(tempDiv, 'professional');
+                } else if (currentTheme === 'fresh') {
+                    applyInlineStyles(tempDiv, 'fresh');
+                } else if (currentTheme === 'tech') {
+                    applyInlineStyles(tempDiv, 'tech');
+                } else {
+                    applyInlineStyles(tempDiv, 'default');
+                }
+                
+                // 获取处理后的HTML内容
+                htmlContent = tempDiv.innerHTML;
+                
+                return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>微信公众号文章</title>
+</head>
+<body>
+    ${htmlContent}
+</body>
+</html>`;
+            }
+            
+            // 应用内联样式
+            function applyInlineStyles(element, theme) {
+                // 定义各主题的颜色配置
+                const themeConfig = {
+                    'default': {
+                        primaryColor: '#07C160',
+                        fontFamily: '-apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif',
+                        backgroundColor: '',
+                        textColor: '#333'
+                    },
+                    'professional': {
+                        primaryColor: '#2b6dc0',
+                        fontFamily: '"Helvetica Neue", Arial, sans-serif',
+                        backgroundColor: '#ffffff',
+                        textColor: '#222'
+                    },
+                    'fresh': {
+                        primaryColor: '#ff6b6b',
+                        fontFamily: '"PingFang SC", "Hiragino Sans GB", sans-serif',
+                        backgroundColor: '#fbfdfd',
+                        textColor: '#444'
+                    },
+                    'tech': {
+                        primaryColor: '#17a2b8',
+                        fontFamily: 'Consolas, "Courier New", monospace',
+                        backgroundColor: '#f8f9fa',
+                        textColor: '#222'
+                    }
+                };
+                
+                const config = themeConfig[theme];
+                
+                // 设置容器样式
+                element.style.fontFamily = config.fontFamily;
+                element.style.lineHeight = '1.7';
+                element.style.color = config.textColor;
+                element.style.padding = '20px';
+                element.style.maxWidth = '100%';
+                
+                if (config.backgroundColor) {
+                    element.style.backgroundColor = config.backgroundColor;
+                }
+                
+                // 为标题添加样式
+                const h1Elements = element.querySelectorAll('h1');
+                h1Elements.forEach(h1 => {
+                    h1.style.fontSize = '24px';
+                    h1.style.fontWeight = 'bold';
+                    h1.style.textAlign = 'center';
+                    h1.style.margin = '25px 0';
+                    h1.style.color = '#333';
+                });
+                
+                const h2Elements = element.querySelectorAll('h2');
+                h2Elements.forEach(h2 => {
+                    h2.style.fontSize = '20px';
+                    h2.style.fontWeight = 'bold';
+                    h2.style.margin = '30px 0 15px';
+                    h2.style.paddingLeft = '15px';
+                    h2.style.borderLeft = `5px solid ${config.primaryColor}`;
+                    h2.style.color = '#444';
+                });
+                
+                const h3Elements = element.querySelectorAll('h3');
+                h3Elements.forEach(h3 => {
+                    h3.style.fontSize = '18px';
+                    h3.style.fontWeight = 'bold';
+                    h3.style.margin = '25px 0 10px';
+                    h3.style.color = '#666';
+                });
+                
+                // 为段落添加样式
+                const pElements = element.querySelectorAll('p');
+                pElements.forEach(p => {
+                    p.style.fontSize = '16px';
+                    p.style.marginBottom = '20px';
+                    p.style.textAlign = 'justify';
+                    p.style.lineHeight = '1.8';
+                });
+                
+                // 为列表添加样式
+                const ulElements = element.querySelectorAll('ul');
+                ulElements.forEach(ul => {
+                    ul.style.paddingLeft = '25px';
+                    ul.style.marginBottom = '20px';
+                });
+                
+                const olElements = element.querySelectorAll('ol');
+                olElements.forEach(ol => {
+                    ol.style.paddingLeft = '25px';
+                    ol.style.marginBottom = '20px';
+                });
+                
+                const liElements = element.querySelectorAll('li');
+                liElements.forEach(li => {
+                    li.style.marginBottom = '10px';
+                    li.style.lineHeight = '1.8';
+                });
+                
+                // 为引用块添加样式
+                const blockquoteElements = element.querySelectorAll('blockquote');
+                blockquoteElements.forEach(blockquote => {
+                    blockquote.style.backgroundColor = '#f9f9f9';
+                    blockquote.style.borderLeft = '5px solid #ccc';
+                    blockquote.style.padding = '20px';
+                    blockquote.style.margin = '20px 0';
+                    blockquote.style.fontStyle = 'italic';
+                });
+                
+                // 为代码添加样式
+                const codeElements = element.querySelectorAll('code');
+                codeElements.forEach(code => {
+                    code.style.backgroundColor = '#f5f5f5';
+                    code.style.padding = '3px 6px';
+                    code.style.borderRadius = '4px';
+                    code.style.fontFamily = 'Consolas, monospace';
+                    code.style.fontSize = '0.9em';
+                });
+                
+                // 为代码块添加样式
+                const preElements = element.querySelectorAll('pre');
+                preElements.forEach(pre => {
+                    pre.style.backgroundColor = '#f5f5f5';
+                    pre.style.padding = '20px';
+                    pre.style.borderRadius = '8px';
+                    pre.style.overflowX = 'auto';
+                    pre.style.margin = '20px 0';
+                });
+                
+                // 为表格添加样式
+                const tableElements = element.querySelectorAll('table');
+                tableElements.forEach(table => {
+                    table.style.width = '100%';
+                    table.style.borderCollapse = 'collapse';
+                    table.style.margin = '25px 0';
+                });
+                
+                const thElements = element.querySelectorAll('th');
+                thElements.forEach(th => {
+                    th.style.border = '1px solid #ddd';
+                    th.style.padding = '12px';
+                    th.style.textAlign = 'left';
+                    th.style.backgroundColor = '#f2f2f2';
+                    th.style.fontWeight = 'bold';
+                });
+                
+                const tdElements = element.querySelectorAll('td');
+                tdElements.forEach(td => {
+                    td.style.border = '1px solid #ddd';
+                    td.style.padding = '12px';
+                    td.style.textAlign = 'left';
+                });
+                
+                const trElements = element.querySelectorAll('tr:nth-child(even)');
+                trElements.forEach(tr => {
+                    tr.style.backgroundColor = '#f9f9f9';
+                });
+                
+                // 为图片添加样式
+                const imgElements = element.querySelectorAll('img');
+                imgElements.forEach(img => {
+                    img.style.maxWidth = '100%';
+                    img.style.height = 'auto';
+                    img.style.display = 'block';
+                    img.style.margin = '20px auto';
+                });
+            }
+            
+            // 显示通知
+            function showNotification(message, type = 'success') {
+                notification.textContent = message;
+                notification.className = 'notification';
+                if (type === 'error') {
+                    notification.classList.add('error');
+                }
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
