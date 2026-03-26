@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <title>AI漫剧分镜提示词大全</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --primary-gradient-start: #4a00e0;
+      --primary-gradient-end: #8e2de2;
+      --secondary-color: #00c9ff;
+      --background-dark: #0f0c29;
+      --card-bg: rgba(30, 25, 60, 0.7);
+      --sidebar-bg: rgba(25, 20, 50, 0.8);
+      --text-primary: #e0e6ff;
+      --text-secondary: #a0a9ff;
+      --accent-color: #ff6ec4;
+      --success-color: #7effae;
+      --danger-color: #ff6b6b;
+      --border-radius: 16px;
+      --shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'JetBrains Mono', 'Consolas', 'PingFang SC', Arial, sans-serif;
+      background: linear-gradient(135deg, var(--background-dark), #23215e);
+      margin: 0;
+      padding: 0;
+      color: var(--text-primary);
+      min-height: 100vh;
+      backdrop-filter: blur(10px);
+    }
+
+    header {
+      background: linear-gradient(135deg, #21093a 0%, #103169 100%);
+      color: #fff;
+      padding: 15px 0;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      letter-spacing: 1px;
+      position: relative;
+      z-index: 2;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      background: linear-gradient(to right, #ffffff, #e0f7ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header>div {
+      font-size: 0.85rem;
+      opacity: .7;
+      margin-top: 4px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .main-layout {
+      display: flex;
+      max-width: 1400px;
+      margin: 15px auto;
+      padding: 0 15px;
+      gap: 20px;
+    }
+
+    .side-bar {
+      min-width: 180px;
+      max-width: 220px;
+      background: var(--sidebar-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 20px 15px;
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+      align-self: flex-start;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .side-bar-title {
+      font-size: 1.2rem;
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 18px;
+      letter-spacing: 1px;
+      text-align: center;
+      text-shadow: 0 0 10px rgba(0, 201, 255, 0.5);
+    }
+
+    .style-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .style-btn {
+      background: rgba(40, 30, 80, 0.6);
+      color: var(--text-secondary);
+      border: 1px solid rgba(142, 45, 226, 0.4);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      text-align: left;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(5px);
+    }
+
+    .style-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent);
+      transition: var(--transition);
+    }
+
+    .style-btn:hover::before {
+      left: 100%;
+    }
+
+    .style-btn.active,
+    .style-btn:hover {
+      background: linear-gradient(90deg, var(--primary-gradient-start), var(--primary-gradient-end));
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 6px 15px rgba(142, 45, 226, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 25px;
+      margin-bottom: 20px;
+      animation: fadeIn 0.6s ease-out;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .info-block {
+      margin-bottom: 16px;
+      font-size: 1.05rem;
+      color: var(--secondary-color);
+      display: flex;
+      align-items: center;
+    }
+
+    .info-block strong {
+      color: #fff;
+      font-weight: 700;
+      min-width: 90px;
+      margin-right: 12px;
+    }
+
+    .shots-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .shot-card {
+      flex: 1 1 calc(50% - 20px);
+      min-width: 260px;
+      background: rgba(40, 30, 80, 0.5);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-left: 4px solid var(--primary-gradient-end);
+      position: relative;
+      transition: var(--transition);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(142, 45, 226, 0.3);
+    }
+
+    .shot-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(142, 45, 226, 0.4);
+      border-left: 4px solid var(--secondary-color);
+    }
+
+    .shot-card-content {
+      display: flex;
+      flex-direction: row;
+      gap: 15px;
+    }
+
+    .shot-image {
+      min-width: 112px;
+      height: 150px;
+      background-size: cover;
+      background-position: center;
+      border-radius: 6px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .shot-content {
+      flex: 1;
+    }
+
+    .shot-type {
+      font-weight: bold;
+      color: var(--secondary-color);
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+    }
+
+    .shot-type::before {
+      content: "▶";
+      margin-right: 8px;
+      font-size: 0.7rem;
+      color: var(--accent-color);
+    }
+
+    .shot-desc {
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+      line-height: 1.6;
+      flex-grow: 1;
+    }
+
+    .copy-btn {
+      align-self: flex-start;
+      background: linear-gradient(90deg, var(--primary-gradient-start), var(--primary-gradient-end));
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 20px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 3px 10px rgba(142, 45, 226, 0.4);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-top: 8px;
+    }
+
+    .copy-btn:hover {
+      background: linear-gradient(90deg, var(--primary-gradient-end), var(--primary-gradient-start));
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(142, 45, 226, 0.6);
+    }
+
+    .copy-btn:active {
+      transform: translateY(0);
+    }
+
+    .supplementary,
+    .negative {
+      margin: 12px 0;
+      font-size: 1rem;
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: rgba(40, 30, 80, 0.4);
+    }
+
+    .supplementary {
+      color: var(--success-color);
+      border-left: 3px solid var(--success-color);
+    }
+
+    .negative {
+      color: var(--danger-color);
+      border-left: 3px solid var(--danger-color);
+    }
+
+    ::selection {
+      background: rgba(142, 45, 226, 0.5);
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 992px) {
+      .main-layout {
+        flex-direction: column;
+        margin: 15px auto;
+        padding: 0 12px;
+        gap: 15px;
+      }
+
+      .side-bar {
+        position: static;
+        margin: 0 0 15px 0;
+        width: 100%;
+        max-width: 100vw;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 12px 8px;
+        min-width: unset;
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-gradient-end) var(--sidebar-bg);
+      }
+
+      .side-bar::-webkit-scrollbar {
+        height: 5px;
+      }
+
+      .side-bar::-webkit-scrollbar-track {
+        background: var(--sidebar-bg);
+      }
+
+      .side-bar::-webkit-scrollbar-thumb {
+        background: var(--primary-gradient-end);
+        border-radius: 3px;
+      }
+
+      /* 新增：风格分类横向滚动 */
+      .style-list {
+        flex-direction: row;
+        overflow-x: auto;
+        white-space: nowrap;
+        gap: 10px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-gradient-end) var(--sidebar-bg);
+      }
+
+      .style-btn {
+        flex: 0 0 auto;
+        min-width: 100px;
+        white-space: normal;
+      }
+
+      .container {
+        padding: 0;
+      }
+
+      .card {
+        padding: 20px 15px;
+      }
+
+      .shots-list {
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .shot-card {
+        max-width: 100%;
+        min-width: 0;
+        padding: 18px 15px;
+      }
+
+      .shot-card-content {
+        flex-direction: column;
+      }
+
+      .shot-image {
+        min-width: 100%;
+        height: 400px;
+        margin-bottom: 12px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .main-layout {
+        margin: 12px auto;
+        padding: 0 8px;
+        gap: 12px;
+      }
+
+      .side-bar {
+        padding: 12px 5px;
+      }
+
+      .style-btn {
+        min-width: 100px;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+      }
+
+      .card {
+        padding: 16px 12px;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      .shot-card {
+        padding: 15px 12px;
+      }
+
+      .shot-desc {
+        font-size: 0.9rem;
+      }
+
+      .shot-image {
+        height: 180px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="decoration"></div>
+  <div class="decoration"></div>
+
+  <header>
+    <h1>AI漫剧分镜提示词</h1>
+    <div>一键切换风格 | 快速复制提示词</div>
+  </header>
+
+  <div class="main-layout">
+    <aside class="side-bar">
+      <div class="side-bar-title">漫剧风格分类</div>
+      <div class="style-list" id="styleList"></div>
+    </aside>
+
+    <div class="container">
+      <div id="styleDetail"></div>
+    </div>
+  </div>
+
+  <script>
+    // 数据直接嵌入，实际可用fetch异步加载
+    const data = [
+      {
+        "style": "日系二次元漫剧",
+        "suitableFor": "少女/少年向",
+        "coreScene": "校园青春",
+        "shots": [
+          { "type": "开篇分镜", "desc": "日系二次元漫剧风格，横向条漫布局，清晨校园樱花道，阳光透过樱花树洒下，女主背着书包漫步，中景镜头，柔光漫反射，暖粉+米白配色，高清流畅线稿，细腻笔触，8K画质，无噪点，治愈氛围，漫画分镜叙事感" },
+          { "type": "核心中景分镜", "desc": "日系二次元漫剧，男主靠在樱花树旁看书，女主不小心撞到他，书本掉落，两人对视，中景镜头，动态构图，发丝光，暖色调，赛璐璐平涂质感，精致五官，干净背景，轻微动态模糊（突出碰撞感）" },
+          { "type": "关键特写分镜", "desc": "日系二次元漫剧，女主泛红的脸颊+慌乱的眼神，特写镜头，睫毛清晰，眼神高光，柔光滤镜，淡粉渐变背景，细腻皮肤纹理，高清线条，无多余杂线" },
+          { "type": "结尾分镜", "desc": "日系二次元漫剧，两人并肩走在樱花道，背影构图，全景镜头，夕阳余晖，暖橙色调，樱花飘落，电影级光影，分镜留白，治愈松弛感，8K超高清，细腻笔触" }
+        ],
+        "supplementary": "可替换场景（教室/雨夜/神社），替换风格后缀（新海诚画风/京阿尼画风/CLAMP风格）",
+        "negativePrompts": "低分辨率，人体崩坏，五官扭曲，杂乱背景，噪点",
+        "image": "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"180\" viewBox=\"0 0 120 180\"><rect width=\"120\" height=\"180\" fill=\"%234a6eea\"/><path d=\"M30,50 Q60,30 90,50 T150,50\" stroke=\"%23ff6ec4\" stroke-width=\"2\" fill=\"none\"/><circle cx=\"40\" cy=\"70\" r=\"25\" fill=\"%23ffffff\" opacity=\"0.8\"/><circle cx=\"45\" cy=\"65\" r=\"5\" fill=\"%23000000\"/><path d=\"M35,85 Q50,95 65,85\" stroke=\"%23000000\" stroke-width=\"2\" fill=\"none\"/></svg>')"
+      },
+      {
+        "style": "韩系漫剧",
+        "suitableFor": "总裁/言情向",
+        "coreScene": "都市言情",
+        "shots": [
+          { "type": "开篇分镜", "desc": "韩漫Webtoon风格，纵向条漫布局，高级写字楼大厅，女主抱着文件匆匆走过，近景镜头，冷白+浅灰配色，强烈阴影，精致美型五官，修长比例，电影级分镜，高清质感，无噪点，职场氛围感" },
+          { "type": "核心中景分镜", "desc": "韩漫风格，男主（总裁）站在电梯口，一身黑色西装，眼神冷峻，女主不小心撞到他，文件散落，中景镜头，对峙构图，冷色调，侧光，凌厉线条，细腻衣褶，真实质感，高对比光影" },
+          { "type": "关键特写分镜", "desc": "韩漫风格，男主骨节分明的手按住女主的肩膀，特写镜头，金属腕表细节清晰，冷色调，阴影强烈，皮肤纹理细腻，高清线条，高级质感，暧昧拉扯氛围" },
+          { "type": "结尾分镜", "desc": "韩漫Webtoon风格，电梯门关闭，男主看着女主慌乱的背影，近景镜头，冷色调，眼神深邃，轻微柔光，职场背景虚化，分镜留白，电影级质感，8K高清" }
+        ],
+        "supplementary": "可替换场景（咖啡馆/别墅/机场），替换风格后缀（韩系唯美/韩漫古风）",
+        "negativePrompts": "低分辨率，杂乱背景，颜色脏，多手指，文字重叠",
+        "image": "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"180\" viewBox=\"0 0 120 180\"><rect width=\"120\" height=\"180\" fill=\"%232d3a6b\"/><rect x=\"20\" y=\"30\" width=\"80\" height=\"120\" rx=\"5\" fill=\"%23ffffff\"/><line x1=\"30\" y1=\"50\" x2=\"90\" y2=\"50\" stroke=\"%23cccccc\" stroke-width=\"1\"/><circle cx=\"60\" cy=\"80\" r=\"20\" fill=\"%23f0c0a0\"/><rect x=\"45\" y=\"105\" width=\"30\" height=\"40\" fill=\"%23d0a0c0\"/></svg>')"
+      },
+      {
+        "style": "国漫古风漫剧",
+        "suitableFor": "仙侠/武侠/古言向",
+        "coreScene": "仙侠虐恋",
+        "shots": [
+          { "type": "开篇分镜", "desc": "国漫古风漫剧，横向分镜布局，仙侠秘境，云雾缭绕，白衣女主站在桃花树下，手持长剑，全景镜头，水墨线稿，淡彩配色（青+粉+白），仙气光影，飘逸衣褶，敦煌风线条，8K高清，清冷氛围" },
+          { "type": "核心中景分镜", "desc": "国漫古风，黑衣男主（仙尊）与白衣女主对峙，两人手持长剑，剑尖相对，中景镜头，动态构图，速度线，逆光轮廓光，冷色调，水墨质感，祥云背景，凌厉线条，张力十足" },
+          { "type": "关键特写分镜", "desc": "国漫古风，女主含泪的眼睛，睫毛带泪，眼神破碎，特写镜头，柔光滤镜，淡青配色，细腻眼妆，水墨线条，高光清晰，破碎感拉满" },
+          { "type": "结尾分镜", "desc": "国漫古风漫剧，女主转身离去，背影孤寂，全景镜头，云雾缭绕，夕阳染红天际，暖橙+淡青配色，飘逸衣摆，水墨质感，分镜留白，悲伤氛围，8K高清" }
+        ],
+        "supplementary": "可替换场景（武侠客栈/皇宫/敦煌秘境），替换风格后缀（狐妖小红娘画风/魔道祖师画风）",
+        "negativePrompts": "人体崩坏，线条杂乱，颜色艳丽俗气，噪点，背景模糊",
+        "image": "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"180\" viewBox=\"0 0 120 180\"><rect width=\"120\" height=\"180\" fill=\"%23e0d8c0\"/><path d=\"M20,100 Q60,40 100,100 T180,100\" fill=\"%2387ceeb\" opacity=\"0.3\"/><circle cx=\"60\" cy=\"80\" r=\"25\" fill=\"%23f0e0d0\"/><path d=\"M40,120 L80,120 Q90,140 60,160 Q30,140 40,120\" fill=\"%23a0522d\"/><path d=\"M30,70 Q60,50 90,70\" stroke=\"%238b4513\" stroke-width=\"2\" fill=\"none\"/></svg>')"
+      },
+      {
+        "style": "欧美漫剧",
+        "suitableFor": "超级英雄/悬疑向",
+        "coreScene": "超级英雄",
+        "shots": [
+          { "type": "开篇分镜", "desc": "美式漫画风格，电影级分镜，城市废墟之上，超级英雄站在高楼顶端，披风随风飘动，全景镜头，暗色调（黑+蓝+红），强对比光影，粗线条，硬朗质感，8K高清，紧张压迫氛围" },
+          { "type": "核心中景分镜", "desc": "Marvel漫威风格，超级英雄与反派对峙，两人摆出战斗姿势，中景镜头，动态构图，速度线，强光影对比，金属质感（武器），粗线条，高饱和配色（红+金+黑），张力十足" },
+          { "type": "关键特写分镜", "desc": "美式漫画风格，超级英雄的手部（握拳，带有能量光效），特写镜头，金属质感，能量光效（红色），粗线条，强阴影，细节丰富，8K高清，力量感拉满" },
+          { "type": "结尾分镜", "desc": "DC漫画风格，超级英雄望着恢复平静的城市，背影构图，全景镜头，暗色调，柔光余晖，披风飘动，粗线条，电影级质感，分镜留白，正义氛围感" }
+        ],
+        "supplementary": "可替换场景（实验室/外星战场/城市街头），替换风格后缀（法式浪漫/欧美卡通）",
+        "negativePrompts": "线条模糊，低分辨率，五官扭曲，颜色混乱，画面割裂",
+        "image": "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"180\" viewBox=\"0 0 120 180\"><rect width=\"120\" height=\"180\" fill=\"%23222222\"/><circle cx=\"60\" cy=\"70\" r=\"30\" fill=\"%23ff0000\"/><rect x=\"40\" y=\"100\" width=\"40\" height=\"50\" fill=\"%230000ff\"/><rect x=\"50\" y=\"60\" width=\"20\" height=\"10\" fill=\"%23ffff00\"/><path d=\"M30,150 L90,150 L75,170 L45,170 Z\" fill=\"%23cccccc\"/></svg>')"
+      },
+      {
+        "style": "暗黑悬疑漫剧",
+        "suitableFor": "惊悚/病娇/悬疑向",
+        "coreScene": "悬疑密室",
+        "shots": [
+          { "type": "开篇分镜", "desc": "暗黑悬疑漫剧，纵向条漫布局，昏暗密室，灯光闪烁，女主蜷缩在角落，近景镜头，冷色调（黑+青灰），暗角浓重，阴影强烈，漫画网点纸质感，低饱和，压抑氛围，8K高清" },
+          { "type": "核心中景分镜", "desc": "暗黑漫剧，密室走廊，灯光忽明忽暗，远处有模糊人影，女主手持手电筒，小心翼翼前行，中景镜头，侧光，诡异氛围，扭曲线条（背景装饰），低饱和配色，悬疑感拉满，动态模糊（手电筒光影）" },
+          { "type": "关键特写分镜", "desc": "暗黑悬疑漫剧，女主颤抖的手（握着手电筒），指甲泛白，特写镜头，冷色调，强烈阴影，细腻皮肤纹理，网点纸质感，紧张氛围，高清细节" },
+          { "type": "结尾分镜", "desc": "暗黑漫剧，人影靠近女主，只露出一双诡异的眼睛，特写+近景结合，冷色调，暗角，诡异光效，低饱和，压抑绝望，分镜留白，惊悚氛围，8K高清" }
+        ],
+        "supplementary": "可替换场景（废弃医院/老宅/雨夜小巷），替换风格后缀（哥特漫剧/克苏鲁漫剧/病娇漫剧）",
+        "negativePrompts": "高饱和，明亮画面，杂乱线条，噪点，五官扭曲",
+        "image": "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"180\" viewBox=\"0 0 120 180\"><rect width=\"120\" height=\"180\" fill=\"%23111111\"/><rect x=\"20\" y=\"20\" width=\"80\" height=\"140\" fill=\"%23333333\" opacity=\"0.6\"/><circle cx=\"60\" cy=\"70\" r=\"15\" fill=\"%23ff4444\" opacity=\"0.7\"/><path d=\"M40,100 C50,120 70,120 80,100\" stroke=\"%23aaaaaa\" stroke-width=\"2\" fill=\"none\"/><rect x=\"55\" y=\"45\" width=\"10\" height=\"10\" fill=\"%23ffcc00\"/></svg>')"
+      },
+      {
+        "style": "Q版萌系漫剧",
+        "suitableFor": "泡面番/治愈向",
+        "coreScene": "宠物陪伴",
+        "shots": [
+          { "type": "开篇分镜", "desc": "Q版漫剧，横向四格分镜布局，卧室场景，Q版女主（大头小身子）趴在床上，看着身边的Q版猫咪，近景镜头，暖色调（浅黄+浅粉），柔和光影，圆润线条，简洁线稿，治愈氛围，8K高清" },
+          { "type": "核心中景分镜", "desc": "Q版萌系漫剧，女主给猫咪喂零食，猫咪蹭女主的手，中景镜头，动态构图，软萌质感，马卡龙色系，简洁背景，圆润轮廓，治愈氛围，轻微柔光" },
+          { "type": "关键特写分镜", "desc": "Q版漫剧，猫咪圆溜溜的眼睛+粉嫩的小爪子，特写镜头，马卡龙配色，柔和光影，圆润线条，细腻质感，可爱氛围拉满，高清细节" },
+          { "type": "结尾分镜", "desc": "Q版漫剧，女主和猫咪一起趴在床上睡觉，全景镜头，暖色调，柔和光影，简洁线条，泡面番风格，干净背景，治愈松弛感，8K高清" }
+        ],
+        "supplementary": "可替换场景（公园/教室/厨房），替换风格后缀（幼稚园风/治愈系漫剧）",
+        "negativePrompts": "粗线条，杂乱背景，高对比，人体畸形，噪点",
+        "image": "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"180\" viewBox=\"0 0 120 180\"><rect width=\"120\" height=\"180\" fill=\"%23fff8dc\"/><circle cx=\"60\" cy=\"60\" r=\"35\" fill=\"%23ffd700\"/><circle cx=\"50\" cy=\"55\" r=\"5\" fill=\"%23000000\"/><circle cx=\"70\" cy=\"55\" r=\"5\" fill=\"%23000000\"/><path d=\"M55,75 Q60,85 65,75\" stroke=\"%23000000\" stroke-width=\"2\" fill=\"none\"/><circle cx=\"60\" cy=\"120\" r=\"25\" fill=\"%23ffa500\"/><rect x=\"45\" y=\"145\" width=\"30\" height=\"20\" fill=\"%23ffa500\"/></svg>')"
+      },
+      {
+        "style": "赛博朋克漫剧",
+        "suitableFor": "科幻/未来向",
+        "coreScene": "未来都市",
+        "shots": [
+          { "type": "开篇分镜", "desc": "赛博朋克漫剧，横向条漫布局，未来都市夜景，霓虹灯光（粉+蓝+紫），高楼林立，全息投影，全景镜头，科技感光影，金属质感，凌厉线条，8K高清，赛博氛围拉满" },
+          { "type": "核心中景分镜", "desc": "赛博朋克漫剧，女主（机械改造人）走在雨夜街头，身上有荧光线条，中景镜头，仰视角度，霓虹反光，地面水洼倒影，冷色调，科技感细节（机械手臂），强烈对比，动态构图" },
+          { "type": "关键特写分镜", "desc": "赛博朋克漫剧，女主的机械手臂，特写镜头，金属质感，荧光线条，细节清晰（螺丝/线路），霓虹光影，冷色调，科技感拉满，8K高清" },
+          { "type": "结尾分镜", "desc": "赛博朋克漫剧，女主站在高楼顶端，俯瞰整个未来都市，全景镜头，霓虹灯光，全息投影，冷色调，科技感光影，分镜留白，孤独又酷飒的氛围，8K高清" }
+        ],
+        "supplementary": "可替换场景（星际飞船/机械工厂/废土都市），替换风格后缀（机甲漫剧/星际漫剧）",
+        "negativePrompts": "低分辨率，颜色暗淡，线条杂乱，噪点，背景模糊",
+        "image": "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"180\" viewBox=\"0 0 120 180\"><rect width=\"120\" height=\"180\" fill=\"%230d0d2b\"/><rect x=\"10\" y=\"20\" width=\"100\" height=\"140\" fill=\"%231a1a3a\"/><rect x=\"30\" y=\"40\" width=\"60\" height=\"100\" fill=\"%2300ffff\" opacity=\"0.2\"/><circle cx=\"60\" cy=\"70\" r=\"15\" fill=\"%23ff00ff\" opacity=\"0.6\"/><line x1=\"20\" y1=\"100\" x2=\"100\" y2=\"100\" stroke=\"%2300ffff\" stroke-width=\"1\" opacity=\"0.5\"/><line x1=\"20\" y1=\"120\" x2=\"100\" y2=\"120\" stroke=\"%23ff00ff\" stroke-width=\"1\" opacity=\"0.5\"/></svg>')"
+      },
+      {
+        "style": "复古文艺漫剧",
+        "suitableFor": "胶片/港风/文艺向",
+        "coreScene": "复古港风",
+        "shots": [
+          { "type": "开篇分镜", "desc": "复古港风漫剧，横向分镜布局，老香港街头，霓虹招牌，女主穿着复古连衣裙，漫步在街头，中景镜头，暖黄滤镜，胶片颗粒，复古色调（棕+红+黄），柔和光影，文艺氛围，8K高清" },
+          { "type": "核心中景分镜", "desc": "复古文艺漫剧，女主坐在老茶馆里，面前放着一杯茶，看着窗外的街头，中景镜头，侧光，暖色调，胶片质感，低对比，细腻笔触，慵懒惬意的氛围，干净背景" },
+          { "type": "关键特写分镜", "desc": "复古港风漫剧，女主的侧脸，复古卷发，红唇，特写镜头，暖黄滤镜，胶片颗粒，柔和光影，细腻皮肤纹理，文艺感拉满，高清细节" },
+          { "type": "结尾分镜", "desc": "复古文艺漫剧，女主的背影，走在老香港街头，夕阳余晖，全景镜头，暖橙色调，胶片颗粒，复古氛围，分镜留白，慵懒松弛感，8K高清" }
+        ],
+        "supplementary": "可替换场景（老书店/复古咖啡馆/老街巷），替换风格后缀（法式复古/文艺漫剧）",
+        "negativePrompts": "高饱和，杂乱背景，噪点严重，线条模糊，颜色刺眼",
+        "image": "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"180\" viewBox=\"0 0 120 180\"><rect width=\"120\" height=\"180\" fill=\"%23f5f5dc\"/><rect x=\"20\" y=\"30\" width=\"80\" height=\"120\" fill=\"%23d2b48c\" rx=\"3\"/><circle cx=\"60\" cy=\"70\" r=\"20\" fill=\"%23cd853f\"/><ellipse cx=\"60\" cy=\"120\" rx=\"25\" ry=\"15\" fill=\"%23deb887\"/><path d=\"M40,90 Q60,85 80,90\" stroke=\"%23a0522d\" stroke-width=\"1\" fill=\"none\"/></svg>')"
+      },
+
+      {
+        "style": "都市奇幻漫剧",
+        "suitableFor": "奇幻/冒险/都市向",
+        "coreScene": "现代都市",
+        "shots": [
+          { "type": "开篇分镜", "desc": "都市奇幻漫剧，横向分镜布局，繁华都市街头，霓虹灯光，女主穿着时尚，漫步在街头，中景镜头，暖色调，柔和光影，现代感十足，8K高清" },
+          { "type": "核心中景分镜", "desc": "都市奇幻漫剧，女主在咖啡馆里，面前放着一本魔法书，专注阅读，中景镜头，侧光，暖色调，现代感与奇幻元素结合，细腻笔触，慵懒惬意的氛围" },
+          { "type": "关键特写分镜", "desc": "都市奇幻漫剧，女主的手（翻动书页），特写镜头，暖色调，细腻皮肤纹理，现代感与奇幻元素结合，高清细节" },
+          { "type": "结尾分镜", "desc": "都市奇幻漫剧，女主站在阳台上，俯瞰整个城市，夕阳余晖，全景镜头，暖橙色调，现代感与奇幻元素结合，分镜留白，慵懒松弛感，8K高清" }
+        ],
+        "supplementary": "可替换场景（城市scape/城市scape/城市scape），替换风格后缀（城市scape/城市scape/城市scape）",
+        "negativePrompts": "低分辨率，颜色暗淡，线条杂乱，噪点，背景模糊"
+      },
+      {
+        "style": "都市奇幻漫剧3D",
+        "suitableFor": "奇幻/冒险/都市向",
+        "coreScene": "现代都市",
+        "shots": [
+          { "type": "开篇分镜", "desc": "3D 漫剧风格，3D 卡通渲染，漫画线条描边，纵向条漫分镜，现代都市街角，少女站在路灯下，中景镜头，柔和体积光，干净光影层次，细腻皮肤材质，毛发清晰，高模质感，8K 超高清，电影级构图，治愈氛围，无噪点" },
+          { "type": "核心中景分镜", "desc": "3D 漫剧，3D 卡通渲染 + 漫画速度线，男女主在街头意外擦肩对视，半身中景，动态构图，轻微动态模糊，柔和侧光，干净阴影，精致五官，真实布料褶皱，发丝光影，漫画分镜叙事感，3D 转 2D 漫感" },
+          { "type": "关键特写分镜", "desc": "3D 漫剧风格，脸部特写，大眼睛高光，细腻睫毛与唇纹，3D 卡通渲染，漫画描边，柔光补光，浅景深背景虚化，皮肤通透质感，眼神灵动，高清细节，干净线条，无崩坏，无噪点" },
+          { "type": "结尾分镜", "desc": "3D 漫剧，全景镜头，夕阳城市天际线，男女主背影，逆光轮廓光，3D 卡通渲染，漫画线条，暖色调，柔和光影，电影级氛围，分镜留白，治愈又高级，8K 超清" }
+        ],
+        "supplementary": "3D 卡通渲染 3D 转漫画风格 伪漫画 3D 渲染 游戏 CG 漫剧风格 cel-shading 3D 漫画线条描边、粗线描边 PBR 材质，高模细节 体积光，柔和阴影 真实毛发，布料物理 3D 动态漫分镜",
+        "negativePrompts": "2D 平涂，模糊线条，低模，粗糙建模，人体畸形，五官崩坏，多手指，噪点，油腻光影，脏阴影，文字重叠，水印"
+      },
+      {
+        "style": "仙侠漫剧3D",
+        "suitableFor": "仙侠/魔幻/ fantasy/magic/fantasy/magic",
+        "coreScene": "仙侠世界",
+        "shots": [
+          { "type": "开篇分镜", "desc": "仙侠漫剧，3D 漫剧风格，3D 卡通渲染，漫画线条描边，纵向条漫分镜，仙侠世界，少女站街，中景镜头，柔和体积光，干净光影层次，细腻皮肤材质，毛发清晰，高模质感，8K 超高清，电影级构图，治愈氛围，无噪点" },
+          { "type": "核心中景分镜", "desc": "仙侠漫剧，3D 漫剧，3D 卡通渲染 + 漫画速度线，少女在街角，小草 behind，中景镜头，动态构图，轻微动态模糊，柔和侧光，干净阴影，精致五官，真实布料褶皱，发丝光影，漫画分镜叙事感，3D 转 2D 漫感" },
+          { "type": "关键特写分镜", "desc": "仙侠漫剧，3D 漫剧风格，3D 卡通渲染，漫画描边，柔光补光，浅景深背景虚化，皮肤通透质感，眼神灵动，高清细节，干净线条，无崩坏，无噪点" },
+          { "type": "结尾分镜", "desc": "仙侠漫剧，3D 漫剧，3D 卡通渲染，漫画线条，暖色调，柔和光影，电影级氛围，分镜留白，治愈又高级，8K 超清" }
+
+        ],
+        "supplementary": "3D 卡通渲染 3D 转漫画风格 伪漫画 3D 渲染 游戏 CG 漫剧风格 cel-shading 3D 漫画线条描边、粗线描边 PBR 材质，高模细节 体积光，柔和阴影 真实毛发，布料物理 3D 动态漫分镜",
+        "negativePrompts": "2D 平涂，模糊线条，低模，粗糙建模，人体畸形，五官崩坏，多手指，噪点，油腻光影，脏阴影，文字重叠，水印"
+      },
+      {
+        "style": "赛博朋克漫剧3D",
+        "suitableFor": "赛博朋克/ Steampunk/ Steampunk/ Steampunk",
+        "coreScene": "赛博朋克",
+        "shots": [
+          { "type": "开篇分镜", "desc": "赛博朋克漫剧，3D 漫剧风格，3D 卡通渲染，漫画线条描边，纵向条漫分镜，赛博朋克世界，少女站街，中景镜头，柔和体积光，干净光影层次，细腻皮肤材质，毛发清晰，高模质感，8K 超高清，电影级构图，治愈氛围，无噪点" },
+          { "type": "核心中景分镜", "desc": "赛博朋克漫剧，3D 漫剧，3D 卡通渲染 + 漫画速度线，少女在街角，小草 behind，中景镜头，动态构图，轻微动态模糊，柔和侧光，干净阴影，精致五官，真实布料褶皱，发丝光影，漫画分镜叙事感，3D 转 2D 漫感" },
+          { "type": "关键特写分镜", "desc": "赛博朋克漫剧，3D 漫剧风格，3D 卡通渲染，漫画描边，柔光补光，浅景深背景虚化，皮肤通透质感，眼神灵动，高清细节，干净线条，无崩坏，无噪点" },
+          { "type": "结尾分镜", "desc": "赛博朋克漫剧，3D 漫剧，3D 卡通渲染，漫画线条，暖色调，柔和光影，电影级氛围，分镜留白，治愈又高级，8K 超清" }
+        ],
+        "supplementary": "3D 卡通渲染 3D 转漫画风格 伪漫画 3D 渲染 游戏 CG 漫剧风格 cel-shading 3D 漫画线条描边、粗线描边 PBR 材质，高模细节 体积光，柔和阴影 真实毛发，布料物理 3D 动态漫分镜",
+        "negativePrompts": "2D 平涂，模糊线条，低模，粗糙建模，人体畸形，五官崩坏，多手指，噪点，油腻光影，脏阴影，文字重叠，水印"
+      }
+    ];
+
+    // 渲染风格按钮
+    const styleList = document.getElementById('styleList');
+    const styleDetail = document.getElementById('styleDetail');
+    let currentIdx = 0;
+
+    function renderStyleButtons() {
+      styleList.innerHTML = '';
+      data.forEach((item, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'style-btn' + (idx === currentIdx ? ' active' : '');
+        btn.textContent = item.style;
+        btn.onclick = () => {
+          currentIdx = idx;
+          renderStyleButtons();
+          renderStyleDetail();
+        };
+        styleList.appendChild(btn);
+      });
+    }
+
+    function renderStyleDetail() {
+      const item = data[currentIdx];
+      const defaultImage = 'url(./images/default.png)'; // 默认图片路径
+      item.image = 'url(./images/' + item.style + '.png), ' + defaultImage; // 替换为本地图片路径
+      let html = '<div class="card">';
+      html += `<div class='info-block'><strong>适配：</strong>${item.suitableFor}</div>`;
+      html += `<div class='info-block'><strong>核心场景：</strong>${item.coreScene}</div>`;
+      html += `<div class='shots-list'>`;
+      item.shots.forEach(shot => {
+        // 获取当前分镜类型在数组中的索引
+        const shotIndex = item.shots.indexOf(shot);
+        html += `<div class='shot-card'>`;
+        html += `<div class='shot-card-content'>`;
+        html += `<div class='shot-image' style='background-image: ${item.image}'></div>`;
+        html += `<div class='shot-content'>`;
+        html += `<div class='shot-type'>${shot.type}</div>`;
+        html += `<div class='shot-desc'>${shot.desc}</div>`;
+        html += `<button class='copy-btn' onclick="navigator.clipboard.writeText('${shot.desc.replace(/'/g, "\'")}');this.textContent='已复制';setTimeout(()=>this.textContent='复制',1000)">复制</button>`;
+        html += `</div>`;
+        html += `</div>`;
+        html += `</div>`;
+      });
+      html += `</div>`;
+      html += `<div class='supplementary'><strong>补充适配：</strong>${item.supplementary}</div>`;
+      html += `<div class='negative'><strong>负面提示词：</strong>${item.negativePrompts}</div>`;
+      html += '</div>';
+      styleDetail.innerHTML = html;
+    }
+
+    renderStyleButtons();
+    renderStyleDetail();
+  </script>
+</body>
+
+</html>
