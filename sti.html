@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SBTI人格测试 | 探索你的性格类型</title>
+    <title>SBTI人格测试 | 经典MBTI + 今日热梗</title>
     <style>
         * {
             margin: 0;
@@ -19,7 +19,6 @@
             line-height: 1.5;
         }
 
-        /* 小程序风格容器 */
         .page {
             min-height: 100vh;
             background: #F5F7FB;
@@ -29,13 +28,13 @@
         /* 卡片样式 */
         .card {
             background: #FFFFFF;
-            border-radius: 28px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.02);
+            border-radius: 32px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.02);
             padding: 24px 20px;
             transition: all 0.2s ease;
         }
 
-        /* 按钮样式 */
+        /* 按钮 */
         .btn {
             display: flex;
             align-items: center;
@@ -50,14 +49,13 @@
             color: #4F46E5;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
             width: 100%;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+            box-shadow: 0 6px 14px rgba(79, 70, 229, 0.25);
         }
 
         .btn-primary:active {
@@ -75,7 +73,6 @@
             background: #F9FAFB;
         }
 
-        /* 头部标题 */
         .title {
             font-size: 28px;
             font-weight: 700;
@@ -90,7 +87,7 @@
         .subtitle {
             font-size: 14px;
             color: #6B7280;
-            margin-bottom: 32px;
+            margin-bottom: 20px;
         }
 
         /* 进度条 */
@@ -118,7 +115,6 @@
             margin-top: 8px;
         }
 
-        /* 题目区域 */
         .question-text {
             font-size: 20px;
             font-weight: 600;
@@ -127,7 +123,6 @@
             color: #111827;
         }
 
-        /* 选项卡片 */
         .option-item {
             background: #F9FAFB;
             border-radius: 20px;
@@ -141,18 +136,17 @@
             gap: 12px;
         }
         .option-marker {
-            width: 24px;
-            height: 24px;
-            border-radius: 24px;
+            width: 26px;
+            height: 26px;
+            border-radius: 26px;
             background: white;
             border: 2px solid #D1D5DB;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             color: #6B7280;
-            transition: all 0.2s;
         }
         .option-text {
             font-size: 16px;
@@ -170,7 +164,6 @@
             color: white;
         }
 
-        /* 导航按钮组 */
         .nav-buttons {
             display: flex;
             gap: 12px;
@@ -206,6 +199,34 @@
             font-size: 15px;
             margin: 16px 0;
             line-height: 1.5;
+        }
+        .hot-tag-card {
+            background: linear-gradient(120deg, #FFF9F0, #FFF3E6);
+            border-radius: 28px;
+            padding: 18px 20px;
+            margin: 20px 0 16px;
+            border-left: 6px solid #F59E0B;
+        }
+        .hot-tag-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #B45309;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .hot-tag-name {
+            font-size: 28px;
+            font-weight: 800;
+            color: #D97706;
+            letter-spacing: 1px;
+            margin: 6px 0;
+        }
+        .hot-tag-desc {
+            font-size: 14px;
+            color: #92400E;
+            line-height: 1.4;
         }
         .dimension-row {
             background: #F9FAFB;
@@ -245,14 +266,16 @@
         .action-buttons {
             display: flex;
             gap: 12px;
-            margin-top: 32px;
+            margin-top: 28px;
         }
-
-        /* 首页介绍区 */
-        .intro-icon {
-            font-size: 56px;
-            text-align: center;
-            margin: 20px 0 12px;
+        .intro-buzz {
+            background: #FEF3C7;
+            border-radius: 24px;
+            padding: 16px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #92400E;
+            border: 1px solid #FFEDD5;
         }
         .feature-list {
             margin: 24px 0;
@@ -273,12 +296,16 @@
             background: #4F46E5;
             border-radius: 6px;
         }
-
         footer {
             text-align: center;
             font-size: 12px;
             color: #9CA3AF;
             margin-top: 32px;
+        }
+        .emoji-big {
+            font-size: 42px;
+            text-align: center;
+            margin: 8px 0;
         }
     </style>
 </head>
@@ -286,7 +313,7 @@
 <div id="app"></div>
 
 <script>
-    // ---------- 题库 (16题, 每个维度4题) ----------
+    // ---------- 经典 MBTI 题库 (16题, 四个维度) ----------
     const QUESTIONS = [
         { text: "你更倾向于如何度过周末？", optionA: "参加社交活动或与朋友聚会", optionB: "独自享受安静时光", dimension: "EI", directionA: "E" },
         { text: "在解决问题时，你更依赖？", optionA: "事实和经验", optionB: "直觉和灵感", dimension: "SN", directionA: "S" },
@@ -306,7 +333,7 @@
         { text: "你倾向于？", optionA: "完成一项任务后再做下一项", optionB: "同时处理多个任务", dimension: "JP", directionA: "J" }
     ];
 
-    // ---------- 16种人格类型详细描述 ----------
+    // ---------- MBTI 16种人格详细描述 ----------
     const TYPE_DETAILS = {
         "INTJ": { name: "建筑师", desc: "富有想象力和战略性的思想家，一切皆在计划之中。拥有独特的理性与远见，擅长构建复杂系统。" },
         "INTP": { name: "逻辑学家", desc: "具有创造力的思考者，对知识有无尽渴望，喜欢探寻理论背后的原理，理性客观。" },
@@ -325,20 +352,16 @@
         "ESTP": { name: "企业家", desc: "聪明、精力充沛且极具感知力，享受冒险和行动，擅长说服他人。" },
         "ESFP": { name: "表演者", desc: "自发、精力充沛而富有娱乐精神的表演者，让周围的气氛充满乐趣。" }
     };
-    // 补充剩余默认
-    const allTypes = ["INTJ","INTP","ENTJ","ENTP","INFJ","INFP","ENFJ","ENFP","ISTJ","ISFJ","ESTJ","ESFJ","ISTP","ISFP","ESTP","ESFP"];
-    allTypes.forEach(t => { if (!TYPE_DETAILS[t]) TYPE_DETAILS[t] = { name: "探索者", desc: "独一无二的性格组合，充满潜力和魅力，不断探索自我与世界。" }; });
+    // 确保所有类型都有描述
+    const allMbtiKeys = ["INTJ","INTP","ENTJ","ENTP","INFJ","INFP","ENFJ","ENFP","ISTJ","ISFJ","ESTJ","ESFJ","ISTP","ISFP","ESTP","ESFP"];
+    allMbtiKeys.forEach(t => { if (!TYPE_DETAILS[t]) TYPE_DETAILS[t] = { name: "探索者", desc: "独一无二的性格组合，充满潜力和魅力，不断探索自我与世界。" }; });
 
-    // 计算MBTI类型 (四个维度 得分>=2 倾向首字母,否则次字母)
+    // 计算MBTI类型 (四个维度得分>=2 倾向首字母)
     function computeMBTI(answers) {
         let scores = { EI: 0, SN: 0, TF: 0, JP: 0 };
         QUESTIONS.forEach((q, idx) => {
             const ans = answers[idx];
-            if (ans === undefined || ans === null) return;
-            // ans: 0 表示选了 optionA (倾向首字母), 1 表示选了 optionB (倾向次字母)
-            if (ans === 0) {
-                scores[q.dimension] += 1;
-            }
+            if (ans === 0) scores[q.dimension] += 1;
         });
         const getType = (dim, first, second) => scores[dim] >= 2 ? first : second;
         const ei = getType("EI", "E", "I");
@@ -348,7 +371,7 @@
         return ei + sn + tf + jp;
     }
 
-    // 获取各维度倾向百分比 (得分/4 * 100, 首字母倾向)
+    // 获取各维度倾向数据 (用于图表)
     function getDimensionPercentages(answers) {
         let scores = { EI: 0, SN: 0, TF: 0, JP: 0 };
         QUESTIONS.forEach((q, idx) => {
@@ -362,48 +385,99 @@
         };
     }
 
-    // ---------- 路由与状态管理 (纯前端模拟多页面) ----------
-    let currentPage = "index"; // index, test, result
-    let testAnswers = new Array(QUESTIONS.length).fill(null); // 存储每道题答案 0/1
+    // ---------- 🔥 今日SBTI热梗映射 (基于MBTI维度得分 & 流行梗) ----------
+    // 根据E/I, S/N, T/F, J/P 得分组合出最适配的「热梗人格」
+    // 参考近日刷屏的梗: 死者、吗喽、ATM-er、尤物、酒鬼、恋爱脑、天生丽质、老黄牛等
+    function getHotSticker(dimensionScores, mbtiType) {
+        // dimensionScores: {EI, SN, TF, JP} 值为0-4
+        const ei = dimensionScores.EI;     // E倾向得分
+        const sn = dimensionScores.SN;
+        const tf = dimensionScores.TF;
+        const jp = dimensionScores.JP;
+        
+        // 根据组合逻辑给出趣味标签
+        // 高I + 高P (内向且随性) -> "死者" (不想社交，感觉被掏空)
+        if (ei <= 1 && jp <= 1) {  // I分高 (ei≤1表示E得分低，即I≥3) 且 P得分高(jp≤1 表示J得分低→P倾向高)
+            return { name: "🧟 死者", emoji: "🪦", desc: "灵魂出窍，只想躺平。上班如上坟，社交如受刑，日常精神状态：已去世，勿扰。" };
+        }
+        // 高I + 高J (内向但有条理) -> "吗喽" (打工猴)
+        if (ei <= 1 && jp >= 3) {
+            return { name: "🐒 吗喽", emoji: "🍌", desc: "打工人的自我修养：勤勤恳恳，任劳任怨，偶尔发疯，本质是个可爱猴子。" };
+        }
+        // 高E + 高F (外向+情感) -> "尤物" 或 "社交甜心"
+        if (ei >= 3 && tf <= 1) {
+            return { name: "💃 尤物", emoji: "✨", desc: "人间绝色，魅力磁场。走到哪里都发光，氛围感拉满，朋友眼中的万人迷。" };
+        }
+        // 高E + 高T (外向+理性) -> "ATM-er" (人形提款机，喜欢买单或掌控)
+        if (ei >= 3 && tf >= 3) {
+            return { name: "💰 ATM-er", emoji: "🏧", desc: "行走的付款码，聚会中的金主爸爸。习惯照顾大家，钱包时常空虚但快乐。" };
+        }
+        // 高F + 高J (情感+计划) -> "恋爱脑"
+        if (tf <= 1 && jp >= 3) {
+            return { name: "💘 恋爱脑", emoji: "😍", desc: "爱情至上，为爱痴狂。看到甜甜的剧情就代入，容易上头也容易心碎。" };
+        }
+        // 高S + 高J -> "老黄牛" / 踏实打工人
+        if (sn <= 1 && jp >= 3) {
+            return { name: "🐂 老黄牛", emoji: "🌾", desc: "踏实可靠，默默耕耘。团队里最稳定的基石，永远可以信赖的务实派。" };
+        }
+        // 高N + 高P -> "野生艺术家" / 摸鱼哲学家
+        if (sn >= 3 && jp <= 1) {
+            return { name: "🎨 野生哲学家", emoji: "🍃", desc: "白日梦想家，灵感喷射机。生活可以乱，精神必须富足，日常摸鱼中悟道。" };
+        }
+        // 剩余情况搭配趣味梗
+        if (mbtiType.includes("IN") && ei <= 1) return { name: "🌙 深夜哲学家", emoji: "🕯️", desc: "喜欢在夜晚思考人生，内心戏丰富，擅长自我拉扯。" };
+        if (mbtiType.includes("ES")) return { name: "🔥 气氛组组长", emoji: "🎉", desc: "聚会没你不行，快乐瀑布，永远的能量站。" };
+        
+        // 默认梗
+        return { name: "🌟 独特星人", emoji: "⭐", desc: "无法被简单定义，你的个性就是最棒的标签。保持神秘，继续闪耀。" };
+    }
+
+    // ---------- 页面状态 ----------
+    let currentPage = "index";   // index, test, result
+    let testAnswers = new Array(QUESTIONS.length).fill(null);
     let currentQuestionIndex = 0;
     let computedType = "";
     let dimensionData = null;
+    let hotStickerResult = null;
 
-    // DOM 元素
     const app = document.getElementById("app");
 
-    // 渲染入口
     function render() {
         if (currentPage === "index") renderIndex();
         else if (currentPage === "test") renderTest();
         else if (currentPage === "result") renderResult();
     }
 
-    // 首页
+    // 首页 - 融入今日SBTI热潮介绍
     function renderIndex() {
         app.innerHTML = `
             <div class="page">
-                <div class="card" style="text-align: center; padding: 32px 24px;">
-                    <div class="intro-icon">🌟</div>
+                <div class="card" style="text-align: center; padding: 28px 22px;">
+                    <div class="emoji-big">🤯🔥</div>
                     <div class="title">SBTI 人格测试</div>
-                    <div class="subtitle" style="margin-bottom: 16px;">基于迈尔斯-布里格斯理论 | 16型人格深度解析</div>
-                    <div style="font-size: 14px; color: #4B5563; margin-bottom: 24px;">
-                        通过16道情景题，探索你的思维模式与行为偏好
+                    <div class="subtitle" style="margin-bottom: 6px;">经典MBTI × 今日网络热梗</div>
+                    <div class="intro-buzz">
+                        🚀 这两天朋友圈刷屏的「死者」「吗喽」「ATM-er」都出自SBTI！<br>
+                        一个劝朋友戒酒的玩笑测试，引爆全网自嘲狂欢。<br>
+                        现在，测你的正经MBTI + 领取你的专属热梗人格✨
                     </div>
                     <div class="feature-list">
-                        <div class="feature-item"><span class="dot"></span> 4个维度：能量来源 · 认知方式 · 决策依据 · 生活态度</div>
-                        <div class="feature-item"><span class="dot"></span> 约3分钟完成测试，结果即时生成</div>
-                        <div class="feature-item"><span class="dot"></span> 简洁设计，专注自我觉察</div>
+                        <div class="feature-item"><span class="dot"></span> 16道经典MBTI题目，科学分析你的性格</div>
+                        <div class="feature-item"><span class="dot"></span> 结果附赠🔥今日SBTI热梗标签（朋友圈同款）</div>
+                        <div class="feature-item"><span class="dot"></span> 简洁无广告，一键分享你的梗人格</div>
                     </div>
-                    <button class="btn btn-primary" id="startTestBtn">开始测试 →</button>
+                    <button class="btn btn-primary" id="startTestBtn">🚀 开始测试 →</button>
+                    <div style="margin-top: 16px; font-size:12px; color:#9CA3AF;">约3分钟 · 更懂自己</div>
                 </div>
-                <footer>© SBTI 人格洞察 | 重新认识自己</footer>
+                <footer>#SBTI #死者 #吗喽 #人格测试</footer>
             </div>
         `;
         document.getElementById("startTestBtn")?.addEventListener("click", () => {
-            // 重置测试数据
             testAnswers = new Array(QUESTIONS.length).fill(null);
             currentQuestionIndex = 0;
+            computedType = "";
+            dimensionData = null;
+            hotStickerResult = null;
             currentPage = "test";
             render();
         });
@@ -417,7 +491,6 @@
         const answeredCount = testAnswers.filter(a => a !== null).length;
         const progressPercent = (answeredCount / total) * 100;
 
-        // 构建选项高亮类
         const optionAClass = selectedVal === 0 ? "active" : "";
         const optionBClass = selectedVal === 1 ? "active" : "";
 
@@ -441,21 +514,19 @@
                     </div>
                     <div class="nav-buttons">
                         <button class="btn btn-outline" id="prevBtn" ${currentQuestionIndex === 0 ? 'disabled style="opacity:0.5"' : ''}>◀ 上一题</button>
-                        <button class="btn btn-primary" id="nextBtn">${currentQuestionIndex === total-1 ? '完成 ✓' : '下一题 ▶'}</button>
+                        <button class="btn btn-primary" id="nextBtn">${currentQuestionIndex === total-1 ? '完成 ✓ 看结果' : '下一题 ▶'}</button>
                     </div>
                 </div>
-                <footer>选择最接近你真实想法的选项</footer>
+                <footer>凭直觉选择，越真实越有趣</footer>
             </div>
         `;
         app.innerHTML = html;
 
-        // 选项点击事件
         const opt0 = document.querySelector('.option-item[data-opt="0"]');
         const opt1 = document.querySelector('.option-item[data-opt="1"]');
         if (opt0) opt0.addEventListener('click', () => selectAnswer(0));
         if (opt1) opt1.addEventListener('click', () => selectAnswer(1));
 
-        // 上一题/下一题
         document.getElementById("prevBtn")?.addEventListener("click", () => {
             if (currentQuestionIndex > 0) {
                 currentQuestionIndex--;
@@ -463,24 +534,29 @@
             }
         });
         document.getElementById("nextBtn")?.addEventListener("click", () => {
-            // 检查当前题目是否已选
             if (testAnswers[currentQuestionIndex] === null) {
                 alert("请先选择一个选项再继续～");
                 return;
             }
             if (currentQuestionIndex === total - 1) {
-                // 完成测试：检查是否所有题目都回答了
                 const allAnswered = testAnswers.every(v => v !== null);
                 if (!allAnswered) {
-                    const missing = testAnswers.reduce((cnt, v, idx) => v === null ? cnt+1 : cnt, 0);
+                    const missing = testAnswers.reduce((cnt, v) => v === null ? cnt+1 : cnt, 0);
                     alert(`还有 ${missing} 道题未完成，请返回完成所有题目再提交。`);
                     return;
                 }
-                // 计算类型并跳转结果页
-                const mbtiType = computeMBTI(testAnswers);
-                const percents = getDimensionPercentages(testAnswers);
-                computedType = mbtiType;
-                dimensionData = percents;
+                // 计算结果
+                const mbti = computeMBTI(testAnswers);
+                const dims = getDimensionPercentages(testAnswers);
+                // 获取原始维度得分用于热梗
+                let rawScores = { EI:0, SN:0, TF:0, JP:0 };
+                QUESTIONS.forEach((q, idx) => {
+                    if (testAnswers[idx] === 0) rawScores[q.dimension] += 1;
+                });
+                const hot = getHotSticker(rawScores, mbti);
+                computedType = mbti;
+                dimensionData = dims;
+                hotStickerResult = hot;
                 currentPage = "result";
                 render();
             } else {
@@ -491,27 +567,29 @@
     }
 
     function selectAnswer(optValue) {
-        // 保存答案
         testAnswers[currentQuestionIndex] = optValue;
-        render(); // 刷新高亮
+        render();  // 刷新高亮
     }
 
-    // 结果页
+    // 结果页 - 经典MBTI + 热梗标签
     function renderResult() {
         if (!computedType || !dimensionData) {
-            // fallback: 重新计算
             computedType = computeMBTI(testAnswers);
             dimensionData = getDimensionPercentages(testAnswers);
+            let rawScores = { EI:0, SN:0, TF:0, JP:0 };
+            QUESTIONS.forEach((q, idx) => {
+                if (testAnswers[idx] === 0) rawScores[q.dimension] += 1;
+            });
+            hotStickerResult = getHotSticker(rawScores, computedType);
         }
         const typeInfo = TYPE_DETAILS[computedType] || TYPE_DETAILS["INFP"];
         const dims = dimensionData;
-        // 构造每个维度的显示条
+        const hot = hotStickerResult;
+
         const renderDimBar = (dimKey, label, left, right) => {
             const data = dims[dimKey];
             const percent = data.percent;
             const leftPercent = percent;
-            const rightPercent = 100 - percent;
-            const dominant = data.score >= 2 ? left : right;
             return `
                 <div class="dimension-row">
                     <div class="dimension-label">${label}</div>
@@ -520,7 +598,7 @@
                         <div class="dimension-bar-container"><div class="dimension-bar" style="width: ${leftPercent}%;"></div></div>
                         <span style="font-weight:500; font-size:14px;">${right}</span>
                     </div>
-                    <div class="dimension-percent">${Math.round(leftPercent)}% / ${Math.round(rightPercent)}%</div>
+                    <div class="dimension-percent">${Math.round(leftPercent)}% / ${Math.round(100-leftPercent)}%</div>
                 </div>
             `;
         };
@@ -533,26 +611,39 @@
                         <div class="result-name">${typeInfo.name}</div>
                         <div class="result-desc">${typeInfo.desc}</div>
                     </div>
-                    <div style="margin: 16px 0 8px; font-weight: 600;">性格维度倾向</div>
+                    
+                    <!-- 🔥 今日SBTI热梗卡片 (朋友圈同款) -->
+                    <div class="hot-tag-card">
+                        <div class="hot-tag-title">
+                            <span>🔥 今日SBTI热梗认证</span> <span>${hot.emoji}</span>
+                        </div>
+                        <div class="hot-tag-name">${hot.name}</div>
+                        <div class="hot-tag-desc">${hot.desc}</div>
+                        <div style="margin-top: 12px; font-size: 12px; color:#B45309;">✨ 最近朋友圈刷屏的同款标签，纯属娱乐，快乐自嘲 ✨</div>
+                    </div>
+                    
+                    <div style="margin: 16px 0 8px; font-weight: 600;">📊 MBTI维度倾向</div>
                     ${renderDimBar("EI", "精力", "E 外向", "I 内向")}
                     ${renderDimBar("SN", "认知", "S 实感", "N 直觉")}
                     ${renderDimBar("TF", "判断", "T 思考", "F 情感")}
                     ${renderDimBar("JP", "态度", "J 判断", "P 感知")}
+                    
                     <div class="action-buttons">
-                        <button class="btn btn-outline" id="restartBtn">重新测试</button>
-                        <button class="btn btn-primary" id="homeBtn">返回首页</button>
+                        <button class="btn btn-outline" id="restartBtn">🔄 重新测试</button>
+                        <button class="btn btn-primary" id="homeBtn">🏠 返回首页</button>
                     </div>
+                    <div style="margin-top: 16px; text-align: center; font-size: 12px; color:#9CA3AF;">分享你的SBTI热梗给朋友，看看谁是“死者”谁是“尤物”～</div>
                 </div>
-                <footer>每个人都是独特的，测试结果仅提供参考方向</footer>
+                <footer>MBTI科学参考 · 热梗源自网络潮流 | 做真实的自己</footer>
             </div>
         `;
         app.innerHTML = html;
         document.getElementById("restartBtn")?.addEventListener("click", () => {
-            // 重置所有数据
             testAnswers = new Array(QUESTIONS.length).fill(null);
             currentQuestionIndex = 0;
             computedType = "";
             dimensionData = null;
+            hotStickerResult = null;
             currentPage = "test";
             render();
         });
@@ -561,12 +652,12 @@
             currentQuestionIndex = 0;
             computedType = "";
             dimensionData = null;
+            hotStickerResult = null;
             currentPage = "index";
             render();
         });
     }
 
-    // 辅助转义
     function escapeHtml(str) {
         if (!str) return "";
         return str.replace(/[&<>]/g, function(m) {
@@ -574,12 +665,9 @@
             if (m === '<') return '&lt;';
             if (m === '>') return '&gt;';
             return m;
-        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-            return c;
         });
     }
 
-    // 启动应用
     render();
 </script>
 </body>
